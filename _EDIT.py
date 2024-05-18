@@ -24,6 +24,9 @@ try:
     if py==1:
         import Assign_fasih_by_namalamat
         Assign_fasih_by_namalamat.RUN()
+    elif py==2:
+        import Assign_fasih_by_idwilker
+        Assign_fasih_by_idwilker.RUN()
     elif py==3:
         import Get_fasih_sm_SKTNP
         Get_fasih_sm_SKTNP.RUN()
