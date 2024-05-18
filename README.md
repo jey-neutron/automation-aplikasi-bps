@@ -10,6 +10,7 @@ Tinggal edit beberapa di file [`_EDIT.py`](/_EDIT.py) lalu jalankan [`_RUN.bat`]
 1. Ambil data Fasih Review survei SKTNP
 2. Ambil data Fasih Review Identifikasi SLS PODES
 3. Assign by Selection Fasih menggunakan nama dan alamat sampel
+4. Assign by Selection Fasih menggunakan ID Wilkerstat
 
 ## BEBERAPA REQUIREMENT ###
 
