@@ -1,3 +1,6 @@
+from argparse import Action
+
+
 def RUN():
     ## Try all
     try:
@@ -110,7 +113,11 @@ def RUN():
             EC.presence_of_element_located((By.XPATH, 'id("navbarUserDropdown")/SPAN[1]/IMG[1]')) )
         notif.show_toast("Assign fasih PY", "I Need U to MILIH SURVEY :(", duration = 1)
         input('# Pilih survei yang mau diassign \n(sampe milih bulan kalau emang survei bulanan).\nJika udah, PRESS ENTER')
-        ##
+        ## !! Pilih kolom yang diperlukan untuk searching dan matching
+        print('\n# Isi isian berikut: (kolom centang paling kiri adalah nomor kolom 1)')
+        colnousersaatini = input('Input nomor kolom untuk "User Saat Ini":')
+        colnonama = input('Input nomor kolom untuk "Nama Sampel":')
+        colnoalamat = input('Input nomor kolom untuk "Alamat Sampel":')
         
 
         ## Assign
@@ -123,7 +130,7 @@ def RUN():
         #notif.show_toast("Assign fasih PY", "I Need U to PRESS ENTER :(", duration = 1)
         #input("# PRESS ENTER to Start Assigning")
         
-        print('# Start assigning fasih --- ')
+        print('\n# Start assigning fasih --- ')
         while True:
             ## loop per row daftar_assign csv
             try:
@@ -156,12 +163,12 @@ def RUN():
                     
                     for i in range(1,jml_row): ## loop row fasih, cek row yang diinginkan
                         ## cek nama kolom
-                        headusersaatini = driver.find_elements_by_css_selector('.thead-bps td:nth-child(10)')[0].text
+                        headusersaatini = driver.find_elements_by_css_selector(f'.thead-bps td:nth-child({str(colnousersaatini)})')[0].text
                         if headusersaatini!="User Saat ini": raise Exception("Kolom sudah berubah, hubungi admin suruh sesuaikan lagiii")
                         
-                        id_web = driver.find_elements_by_css_selector('.ng-star-inserted:nth-child('+str(i)+') > .ng-star-inserted:nth-child(5)')[0].text + \
-                            driver.find_elements_by_css_selector('.ng-star-inserted:nth-child('+str(i)+') > .ng-star-inserted:nth-child(6)')[0].text
-                        usersaatini = driver.find_elements_by_css_selector('.ng-star-inserted:nth-child('+str(i)+') > td:nth-child(10)')[0].text
+                        id_web = driver.find_elements_by_css_selector(f'.ng-star-inserted:nth-child({str(i)}) > .ng-star-inserted:nth-child({str(colnonama)})')[0].text + \
+                            driver.find_elements_by_css_selector(f'.ng-star-inserted:nth-child({str(i)}) > .ng-star-inserted:nth-child({str(colnoalamat)})')[0].text
+                        usersaatini = driver.find_elements_by_css_selector(f'.ng-star-inserted:nth-child({str(i)}) > td:nth-child({str(colnousersaatini)})')[0].text
                         #driver.find_element_by_xpath('id("assignmentDatatable")/TBODY[2]/TR['+i+']/TD[5]').text()
 
                         ## cek kesamaan
@@ -235,7 +242,7 @@ def RUN():
                         driver.find_elements_by_css_selector('button.close')[0].click()
                         status_msg = WebDriverWait(driver,2).until(
                             EC.visibility_of_element_located((By.CSS_SELECTOR, "ngb-modal-window.modal")))
-                        actions.move_to_element(status_msg).perform()
+                        Action.move_to_element(status_msg).perform()
                         status_msg.find_element_by_css_selector("button.close").click()
                     except: pass
                     
@@ -267,7 +274,8 @@ def RUN():
                 if len(listgagal)>5:
                     listgagal.pop(0) #remove timegagal index pertama
                     diff = listgagal[4]-listgagal[0] #itung delta time
-                    difftime = divmod(diff.days * seconds_in_day + diff.seconds, 1)[0]
+                    #difftime = divmod(diff.days * seconds_in_day + diff.seconds, 1)[0]
+                    difftime = diff.seconds
 
                 if gagal%2 == 0 :
                     driver.refresh()
