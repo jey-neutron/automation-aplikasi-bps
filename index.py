@@ -130,7 +130,12 @@ if submit_form:
     # Pilih Program Auto with import method
 
     program_selected = __import__(opt_modul_selected)
-    time.sleep(3)
+    with st.spinner(" Loading... "):
+        with st.empty():
+            for i in range(5,0,-1):
+                st.empty().code('Program dimulai dalam '+str(i))
+                time.sleep(1)
+            st.empty()
 
     # cek if file temp exist (yah buat pengganti notifikasi ajasi #blm berhasil)
     def cek_input(namafile='temp_input.txt'):
@@ -170,14 +175,13 @@ if submit_form:
     with cols[0]:
         #st.markdown('#### Log file:')
         st.button('Log file:', use_container_width=True, disabled=True) #PR: nanti buat download logfile
-        # starts spin
-        next(sp) 
     #with cols[2]:
     with cols[1]:
         st.button('🛖 Stop/Reset', key='hometoo', use_container_width=True)
     try:
         with st.container(height=350):        
-            #with st.spinner(" Loading... "):
+            # starts spin
+            next(sp)
             hasil_run = program_selected.RUN(usernamesso, passwordsso, pilihan_survei, df_name, rentang)
         if "Error" in hasil_run:
             st.error(hasil_run)
