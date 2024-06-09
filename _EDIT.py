@@ -2,6 +2,7 @@
 
 import os
 import sys
+
 # get path to file
 dir_path = os.path.dirname(os.path.realpath(__file__))
 sys.path.append(dir_path+'/code')
@@ -9,12 +10,13 @@ sys.path.append(dir_path+'/code')
 try:
     ## UBAH SSO PEGAWAI ##
     sso_pegawai = {
-        "username" : "usernamessopegawai",
-        "password" : "passwordssopegawai"
+        "username" : "userssopegawai",
+        "password" : "passwordssopegawai",
+        "survei_fasih": "SURVEI PELAPORAN LAPANGAN SEP 2024"
     }
-    
+    """
     ## UBAH YANG MANA PY YANG MAU DI RUN ##
-    py = 4
+    py = 0
     # Pilihan program PY:
     # 1 = Assign fasih by nama & alamat
     # 2 = Assign fasih by id wilkerstat
@@ -34,6 +36,7 @@ try:
         import Get_fasih_sm_IDENTPODES
         Get_fasih_sm_IDENTPODES.RUN()
     input()
+    """
     
 except Exception as e:
     print('ERRR: ',str(e))
