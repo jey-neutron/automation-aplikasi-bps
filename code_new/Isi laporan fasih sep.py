@@ -41,7 +41,7 @@ def desc():
     # desc memuat keterangan program, sso buat apa, nama survei di fasih, dataframe used, rentang baris
     return "1) Program untuk ngisi laporan SEP di Fasih-sm \n 2) SSO untuk login Fasih \n 3) Nama survei isiin SURVEI PELAPORAN LAPANGAN SEP 2024 \n 4) CSV gunakan assign_cawi, tapi harus diedit tiap saat yah sebelum run program dan nama sheetnya samain nama file \n Kolom df: 'kec' adalah kode kec dalam int, 'date' adalah date now dengan format 'dd mm yyyy', 'status' kode status dalam int, 'utp_selesai' jml int utp selesai \n 5) Rentang baris menandakan kode kec. Amannya satu2 karna Fasihnya perlu kode antirobot"
 
-def RUN(ssoname, ssopass, pilihan_survei, df_name, rentang):
+def RUN(ssoname, ssopass, pilihan_survei, df_name, rentang, close_ff = True):
     try:
         # cek df dulu
         columns_wajib = ['kec','date','status','utp_selesai']
@@ -223,6 +223,9 @@ def RUN(ssoname, ssopass, pilihan_survei, df_name, rentang):
     except Exception as e:
         exc_type, exc_obj, exc_tb = sys.exc_info()
         fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+
+        if close_ff:
+            driver.close()
 
         logger.error('WARN: Error happen')
         notif.show_toast("Auto fasih PY", "Error happen", duration = 1)
