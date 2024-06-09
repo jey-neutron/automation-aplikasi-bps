@@ -5,13 +5,16 @@ Beberapa code untuk mengautomatisasi pekerjaan yang menggunakan aplikasi BPS ber
 - Assign FASIH-SM by selection
 
 Tinggal edit beberapa di file [`_EDIT.py`](/_EDIT.py) lalu jalankan [`_RUN.bat`](/_RUN.bat)
-[BLM UPDATE 06/2024]
+
+*Update terbaru (06/24) make tampilan web di localhost. Sementara belum semua fitur/modul tersedia si. Tinggal jalankan [`_RUN.bat`](/_RUN.bat) trus ngisiin beberapa field yang diperlukan.
 
 ## BEBERAPA FITUR/CODE ###
-1. Ambil data Fasih Review survei SKTNP
-2. Ambil data Fasih Review Identifikasi SLS PODES
-3. Assign by Selection Fasih menggunakan nama dan alamat sampel
-4. Assign by Selection Fasih menggunakan ID Wilkerstat
+1. Ambil data row sampel di fasih (blm update)
+2. Ambil data Fasih Review survei SKTNP (blm update)
+3. Ambil data Fasih Review Identifikasi SLS PODES (blm update)
+4. Assign by Selection Fasih menggunakan nama dan alamat sampel (blm update)
+5. Assign by Selection Fasih menggunakan ID Wilkerstat (blm update)
+6. Pelaporan SEP di fasih
 
 ## BEBERAPA REQUIREMENT ###
 
