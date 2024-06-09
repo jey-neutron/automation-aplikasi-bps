@@ -5,6 +5,7 @@ Beberapa code untuk mengautomatisasi pekerjaan yang menggunakan aplikasi BPS ber
 - Assign FASIH-SM by selection
 
 Tinggal edit beberapa di file [`_EDIT.py`](/_EDIT.py) lalu jalankan [`_RUN.bat`](/_RUN.bat)
+[BLM UPDATE 06/2024]
 
 ## BEBERAPA FITUR/CODE ###
 1. Ambil data Fasih Review survei SKTNP
