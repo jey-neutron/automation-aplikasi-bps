@@ -26,6 +26,16 @@ import sys
 logger = logging.getLogger(__name__)
 this_path = Path().resolve()
 #fd, path = tempfile.mkstemp(prefix="temp",dir=this_path)
+from win10toast import ToastNotifier
+## notification for windows os
+class MyToastNotifier(ToastNotifier):
+    def __init__(self):
+        super().__init__()
+    def on_destroy(self, hwnd, msg, wparam, lparam):
+        super().on_destroy(hwnd, msg, wparam, lparam)
+        return 0
+notif = MyToastNotifier()
+#notif.show_toast("Assign fasih PY", "YEYYY SELESE :)", duration = 1)
 
 # func
 def writetemp_input(text):
@@ -89,26 +99,17 @@ def RUN(ssoname, ssopass, pilihan_survei, df_name, rentang, close_ff = True):
 
         # wait until muncul pilihan survei
         time.sleep(10)
-        WebDriverWait(driver, 15).until( #using explicit wait for x seconds
+        WebDriverWait(driver, 50).until( #using explicit wait for x seconds
             EC.presence_of_element_located((By.CSS_SELECTOR, "h4.card-title")) #finding the element
         )
+        logger.info("# Searching the survey")
         for i in range(1, int(driver.find_element_by_xpath('id("Pencacahan_info")').text.split(' ')[3] )):
             namasurveiweb = driver.find_element_by_xpath(f'id("Pencacahan")/TBODY[1]/TR[{i}]/TD[1]/A[1]').text
             if namasurveiweb == pilihan_survei:
                 break
+        logger.info("# Found it, opening link")
         driver.find_element_by_xpath(f'id("Pencacahan")/TBODY[1]/TR[{i}]/TD[1]/A[1]').click()
         time.sleep(3)
-
-        from win10toast import ToastNotifier
-        ## notification for windows os
-        class MyToastNotifier(ToastNotifier):
-            def __init__(self):
-                super().__init__()
-            def on_destroy(self, hwnd, msg, wparam, lparam):
-                super().on_destroy(hwnd, msg, wparam, lparam)
-                return 0
-        notif = MyToastNotifier()
-        #notif.show_toast("Assign fasih PY", "YEYYY SELESE :)", duration = 1)
 
         # ALL run
         ikec = rentang
@@ -224,9 +225,8 @@ def RUN(ssoname, ssopass, pilihan_survei, df_name, rentang, close_ff = True):
         exc_type, exc_obj, exc_tb = sys.exc_info()
         fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
 
-        if close_ff:
-            driver.close()
-
         logger.error('WARN: Error happen')
         notif.show_toast("Auto fasih PY", "Error happen", duration = 1)
+        if close_ff:
+            driver.close()
         return (f"Error: {str(e)}, type error: {exc_type}, on file: {fname} on line {exc_tb.tb_lineno}")
