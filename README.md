@@ -11,7 +11,7 @@ Tinggal edit beberapa di file [`_EDIT.py`](/_EDIT.py) lalu jalankan [`_RUN.bat`]
 > - [`_RUN.bat`](/_RUN.bat) is using [`_code_new`](/code_new) *this is updated new, use this instead
 
 ## BEBERAPA FITUR/CODE ###
-1. Ambil data row sampel di fasih (blm update)
+1. Ambil data row sampel di fasih
 2. Ambil data Fasih Review survei SKTNP (blm update)
 3. Ambil data Fasih Review Identifikasi SLS PODES (blm update)
 4. Assign by Selection Fasih menggunakan nama dan alamat sampel (blm update)
