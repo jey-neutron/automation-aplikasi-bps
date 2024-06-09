@@ -182,7 +182,7 @@ if submit_form:
         with st.container(height=350):        
             # starts spin
             next(sp)
-            hasil_run = program_selected.RUN(usernamesso, passwordsso, pilihan_survei, df_name, rentang)
+            hasil_run = program_selected.RUN(usernamesso, passwordsso, pilihan_survei, df_name, rentang, close_ff=True)
         if "Error" in hasil_run:
             st.error(hasil_run)
         else:
