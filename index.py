@@ -132,7 +132,7 @@ if submit_form:
     program_selected = __import__(opt_modul_selected)
     with st.spinner(" Loading... "):
         with st.empty():
-            for i in range(5,0,-1):
+            for i in range(3,0,-1):
                 st.empty().code('Program dimulai dalam '+str(i))
                 time.sleep(1)
             st.empty()
