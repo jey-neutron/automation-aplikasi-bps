@@ -6,9 +6,9 @@ Beberapa code untuk mengautomatisasi pekerjaan yang menggunakan aplikasi BPS ber
 
 Tinggal edit beberapa di file [`_EDIT.py`](/_EDIT.py) lalu jalankan [`_RUN.bat`](/_RUN.bat)
 
-*Update terbaru (06/24) make tampilan web di localhost. Sementara belum semua fitur/modul tersedia si. Tinggal jalankan [`_RUN.bat`](/_RUN.bat) trus ngisiin beberapa field yang diperlukan.
-- [`_run_alt.bat`](/_run_alt.bat) is using [`_code`](/code)
-- [`_RUN.bat`](/_RUN.bat) is using [`_code_new`](/code_new) *this is updated new
+> *Update terbaru (06/24) make tampilan web di localhost. Sementara belum semua fitur/modul tersedia si. Tinggal jalankan [`_RUN.bat`](/_RUN.bat) trus ngisiin beberapa field yang diperlukan.
+> - [`_run_alt.bat`](/_run_alt.bat) is using [`_code`](/code)
+> - [`_RUN.bat`](/_RUN.bat) is using [`_code_new`](/code_new) *this is updated new, use this instead
 
 ## BEBERAPA FITUR/CODE ###
 1. Ambil data row sampel di fasih (blm update)
