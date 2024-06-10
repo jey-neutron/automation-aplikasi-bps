@@ -60,7 +60,7 @@ def RUN(ssoname, ssopass, pilihan_survei, df_name, rentang, close_ff = True):
         logger.info("Checking df")
         df = pd.read_excel(str(this_path)+"/"+df_name, sheet_name=df_name.split(".")[0])
         columns_df = [x for x in columns_wajib if x in df.columns]
-        logger.info(df.head())
+        logger.info(f'DF: {df.head()}')
         ## cek kolom data csv
         if columns_df != columns_wajib: 
             kataerror = '# Maaf data tidak memenuhi kriteria. \nKolom wajib ada: '+str(columns_wajib)+\
@@ -91,6 +91,7 @@ def RUN(ssoname, ssopass, pilihan_survei, df_name, rentang, close_ff = True):
             EC.presence_of_element_located((By.XPATH, "id('login-in')/A[2]")) #finding the element
         ).click()
         # input SSO
+        logger.info("Loading, dont do anything")
         WebDriverWait(driver, 15).until( #using explicit wait for x seconds
             EC.presence_of_element_located((By.XPATH, 'id("kc-login")')) )
         driver.find_element_by_xpath('//*[@id="username"]').send_keys(ssoname)
@@ -98,12 +99,13 @@ def RUN(ssoname, ssopass, pilihan_survei, df_name, rentang, close_ff = True):
         driver.find_element_by_xpath('//*[@id="kc-login"]').send_keys(Keys.RETURN)
 
         # wait until muncul pilihan survei
-        time.sleep(10)
+        time.sleep(6)
         WebDriverWait(driver,60).until( #using explicit wait for x seconds
             #EC.presence_of_element_located((By.CSS_SELECTOR, "h4.card-title")) #finding the element
             #EC.presence_of_element_located((By.CSS_SELECTOR, "div#Pencacahan_info")) #finding the element
             EC.presence_of_element_located((By.XPATH, 'id("Pencacahan_info")')) #finding the element
         )
+        time.sleep(6)
         logger.info(f"Searching the survey from ({driver.find_element_by_xpath('id("Pencacahan_info")').text})")
         for i in range(1, int(driver.find_element_by_xpath('id("Pencacahan_info")').text.split(' ')[3] )):
             namasurveiweb = driver.find_element_by_xpath(f'id("Pencacahan")/TBODY[1]/TR[{i}]/TD[1]/A[1]').text
@@ -230,10 +232,11 @@ def RUN(ssoname, ssopass, pilihan_survei, df_name, rentang, close_ff = True):
             pesan = "SUDAH SELEEE" if ikec == ikec1-1 else "20 SEC I NEED UR ATTENTION"
             notif.show_toast("Auto fasih PY", pesan, duration = 1)
             confirm = input(f"{datetime.datetime.now()} | PAUSED, Input anything to continue")
+            time.sleep(20)
             if confirm:
                 print(f"{datetime.datetime.now()} | Dah kembali ke browser")
+            print(f"{datetime.datetime.now()} | Dah kembali ke browser")
             logger.info('Continuing next iteration')
-            time.sleep(20)
         logger.info('SELESEEEEE')
         driver.close()
 

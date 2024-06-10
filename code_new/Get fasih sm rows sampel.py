@@ -61,6 +61,7 @@ def RUN(ssoname, ssopass, pilihan_survei, df_name, rentang, close_ff=True):
             EC.presence_of_element_located((By.XPATH, "id('login-in')/A[2]")) #finding the element
         ).click()
         # input SSO
+        logger.info("Loading, dont do anything")
         WebDriverWait(driver, 15).until( #using explicit wait for x seconds
             EC.presence_of_element_located((By.XPATH, 'id("kc-login")')) )
         driver.find_element_by_xpath('//*[@id="username"]').send_keys(ssoname)
@@ -68,12 +69,13 @@ def RUN(ssoname, ssopass, pilihan_survei, df_name, rentang, close_ff=True):
         driver.find_element_by_xpath('//*[@id="kc-login"]').send_keys(Keys.RETURN)
 
         # wait until muncul pilihan survei
-        time.sleep(10)
+        time.sleep(6)
         WebDriverWait(driver,60).until( #using explicit wait for x seconds
             #EC.presence_of_element_located((By.CSS_SELECTOR, "h4.card-title")) #finding the element
             #EC.presence_of_element_located((By.CSS_SELECTOR, "div#Pencacahan_info")) #finding the element
             EC.presence_of_element_located((By.XPATH, 'id("Pencacahan_info")')) #finding the element
         )
+        time.sleep(6)
         logger.info(f"Searching the survey from ({driver.find_element_by_xpath('id("Pencacahan_info")').text})")
         for i in range(1, int(driver.find_element_by_xpath('id("Pencacahan_info")').text.split(' ')[3] )):
             namasurveiweb = driver.find_element_by_xpath(f'id("Pencacahan")/TBODY[1]/TR[{i}]/TD[1]/A[1]').text
@@ -84,8 +86,15 @@ def RUN(ssoname, ssopass, pilihan_survei, df_name, rentang, close_ff=True):
         time.sleep(3)
 
         # RUN ALL
+        # get jml kolom in sampel fasih
         jmlhead = driver.find_elements_by_xpath('id("assignmentDatatable")/THEAD[1]/TR[1]/TD')
         logger.info(f"Getting data with {len(jmlhead)} columns")
+        isirow = []
+        for col in range(1,len(jmlhead)+1):
+            isirow.append(driver.find_element_by_xpath(f'id("assignmentDatatable")/THEAD[1]/TR[1]/TD[{str(col)}]').text)
+        with open(f'log {pilihan_survei}_sampel.csv','w',newline='') as fd:
+            writer = csv.writer(fd)
+            writer.writerow([0]+isirow)
         #row_max = int(driver.find_element_by_css_selector('div#assignmentDatatable_info').text.split()[5]) # get num of all rows
         #numrow = 0 # initiate from row start (default value = 0)
         numpage = 1 # page number
@@ -104,17 +113,15 @@ def RUN(ssoname, ssopass, pilihan_survei, df_name, rentang, close_ff=True):
             #print(" row progress:", end='')
             # get jml row
             jml_row = len(driver.find_elements_by_xpath('id("assignmentDatatable")/TBODY[2]/TR')) #len row in that page
-            if jml_row==1:
-                jml_row+=1
             # loop per row in this page
-            for row in range(1,jml_row):
+            for row in range(1,jml_row+1):
                 numrow += 1 # get this row
                 isirow = []
                 for col in range(1,len(jmlhead)+1):
                     isirow.append(driver.find_element_by_xpath(f'id("assignmentDatatable")/TBODY[2]/TR[{str(row)}]/TD[{str(col)}]').text)
                 # write 1 row to csv
                 #logger.info(isirow)
-                with open('log Get_fasih_sm_rows_sampel.csv','a',newline='') as fd:
+                with open(f'log {pilihan_survei}_sampel.csv','a',newline='') as fd:
                     writer = csv.writer(fd)
                     writer.writerow([numrow]+isirow)
                 #print(row, col, isirow)
@@ -123,11 +130,13 @@ def RUN(ssoname, ssopass, pilihan_survei, df_name, rentang, close_ff=True):
             
             #next page
             numpage+=1
+            time.sleep(0.5)
             WebDriverWait(driver, 30).until(EC.presence_of_element_located((By.XPATH, 'id("assignmentDatatable_next")')) ).click()
             
         time.sleep(2)
+        logger.info('SELESEEEEE')
         driver.close()
-        return("Program selesai di jalankan")
+        return("Program selesai di jalankan, hasil file ada di ➡️ "+f'log {pilihan_survei}_sampel.csv')
     
     except Exception as e:
         exc_type, exc_obj, exc_tb = sys.exc_info()
