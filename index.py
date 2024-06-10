@@ -18,6 +18,11 @@ import streamlit as st
 
 
 # config
+# init spin
+def make_spinner(text="Loading..."):
+    with st.spinner(text):
+        yield
+sp0 = iter(make_spinner("Loading programs..."))
 this_path = Path().resolve()
 # logging (use logger.info di anaknya instead of print)
 import logging
@@ -34,6 +39,7 @@ class StreamlitLogHandler(logging.Handler):
 # Main View
 # header html
 st.set_page_config(page_title="Auto Fasih", layout="wide", page_icon="🤖")
+next(sp0) # start spin on load web
 st.markdown("""
     <style>
     .small-font {
@@ -103,7 +109,7 @@ with st.sidebar.form(key="form_sso"):
     # rentang row yang ingin dijalankan
     rentang = st.text_input('Ketik baris mana program mulai jalan', 1)
     st.markdown(
-        f'<p class="small-font">Isi 1 berarti dari baris pertama <br> Isi 1-6 berarti dari baris 1-6</p>',
+        f'<p class="small-font">Isi 1 atau 0 berarti dari baris pertama <br> Isi 1-6 berarti dari baris 1-6 <br> Baca DESKRIPSI</p>',
         unsafe_allow_html=True,
     )
     # submit
@@ -112,8 +118,8 @@ with st.sidebar.form(key="form_sso"):
 with st.sidebar:
     reset_form = st.button('🛖 Home', key='home', use_container_width=True)
     
-
 # if submit form filter
+next(sp0,None)
 if submit_form:
     # title page
         
@@ -144,19 +150,30 @@ if submit_form:
         
     # try cuztomize writing log 
     def write_log(logtext):
-        if 'CONFIRM_DELETE' in logtext:
-        # GAGAL WORK, LANJUT AJA LA
-            st.warning(f"{datetime.datetime.now().strftime('%H:%M:%S')} | {str(logtext).split(':')[1]}")
-            # st.warning("Click button di bawah")        
-            b = st.checkbox("Tick me jika sudah ngecek Firefox")
-        #     b = st.button('Click', key='cek_input')        
-        #     if b:
-        #         os.remove((this_path)+f"/temp_input.txt")
-        #         b = st.checkbox("Tick me jika sudah ngecek Firefox", disabled=True)
-            return()
-        if 'WARN' in logtext:
-            return st.warning(f"{datetime.datetime.now().strftime('%H:%M:%S')} | {str(logtext).split(':')[1]}")
-        return st.code(f"{datetime.datetime.now().strftime('%H:%M:%S')} | {str(logtext)}")
+        with placeholder_log:
+            if 'CONFIRM_DELETE' in logtext:
+            # GAGAL WORK, LANJUT AJA LA
+                txt = f"{datetime.datetime.now().strftime('%H:%M:%S')} | {str(logtext).split(':')[1]}"
+                st.warning(txt)
+                # st.warning("Click button di bawah")        
+            #     b = st.checkbox("Tick me jika sudah ngecek Firefox")
+            #     b = st.button('Click', key='cek_input')        
+            #     if b:
+            #         os.remove((this_path)+f"/temp_input.txt")
+            #         b = st.checkbox("Tick me jika sudah ngecek Firefox", disabled=True)
+                return()
+            if 'WARN' in logtext:
+                txt = f"{datetime.datetime.now().strftime('%H:%M:%S')} | {str(logtext).split(':')[1]}"
+                #return st.warning(txt)
+            txt = f"{datetime.datetime.now().strftime('%H:%M:%S')} | {str(logtext)}"
+            #logs_data.append(txt)
+            return st.text(txt)
+        
+    def write_log_inline(logtext):
+        with placeholder_loginline:
+            if 'WARN' in logtext:
+                return st.warning(f"{datetime.datetime.now().strftime('%H:%M:%S')} | {str(logtext).split(':')[1]}")
+            return st.code(f"LATEST LOG: {datetime.datetime.now().strftime('%H:%M:%S')} | {str(logtext)}")
 
     # loging code
     logger = get_logger(program_selected.__name__)
@@ -165,24 +182,29 @@ if submit_form:
     handler = StreamlitLogHandler(write_log)
     logger.addHandler(handler) 
 
-    # init spin
-    def make_spinner(text="Loading..."):
-        with st.spinner(text):
-            yield
-    sp = iter(make_spinner("Running programs..."))
+
     # run program and display log
+    sp = iter(make_spinner("Running programs..."))
     cols = st.columns(5)
     with cols[0]:
         #st.markdown('#### Log file:')
-        st.button('Log file:', use_container_width=True, disabled=True) #PR: nanti buat download logfile
+        downlog = st.button('Log file:', use_container_width=True, disabled=True) #PR: nanti buat download logfile
     #with cols[2]:
     with cols[1]:
         st.button('🛖 Stop/Reset', key='hometoo', use_container_width=True)
+    
+    # log inline
+    next(sp)
+    placeholder_loginline = st.empty()
+    handlerst = StreamlitLogHandler(write_log_inline)
+    logger.addHandler(handlerst)
+    
+    st.write("Log file history:")
+    placeholder_log = st.container(height=350)
     try:
-        with st.container(height=350):        
-            # starts spin
-            next(sp)
-            hasil_run = program_selected.RUN(usernamesso, passwordsso, pilihan_survei, df_name, rentang, close_ff=True)
+        hasil_run = program_selected.RUN(usernamesso, passwordsso, pilihan_survei, df_name, rentang, close_ff=_EDIT.sso_pegawai['close_firefox_on_error'])
+        #with st.container(height=350):        
+            #next(sp) # starts spin
         if "Error" in hasil_run:
             st.error(hasil_run)
         else:

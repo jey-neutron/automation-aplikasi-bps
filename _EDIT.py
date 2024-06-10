@@ -10,9 +10,10 @@ sys.path.append(dir_path+'/code')
 try:
     ## UBAH SSO PEGAWAI ##
     sso_pegawai = {
-        "username" : "userssopegawai",
-        "password" : "passwordssopegawai",
-        "survei_fasih": "SURVEI PELAPORAN LAPANGAN SEP 2024"
+        "username" : "ssouser",
+        "password" : "ssopass",
+        "survei_fasih": "SURVEI PELAPORAN LAPANGAN SEP 2024",
+        "close_firefox_on_error" : True
     }
     """
     ## UBAH YANG MANA PY YANG MAU DI RUN ##
