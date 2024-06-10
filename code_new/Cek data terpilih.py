@@ -22,12 +22,14 @@ def RUN(ssoname, ssopass, pilihan_survei, df_name, rentang, close_ff=True):
         # cek df
         if ".csv" in str(df_name):
             df = pd.read_csv(str(this_path)+"/"+df_name)
+            onsheet = ''
         elif ".xlsx" in str(df_name):
             df = pd.read_excel(str(this_path)+"/"+df_name, sheet_name=df_name.split(".")[0])
-        logger.info(f'Details of data selected: \n- Filename = {str(df_name)} \n- In directory = {str(this_path)} \n- Size df = {len(df)} row x {len(df.columns)} columns \n- Columns = {[i for i in df.columns]}')
+            onsheet = f" onsheet= {df_name.split(".")[0]} "
+        logger.info(f'Details of data selected: \n- Filename = {str(df_name)}, {onsheet}\n- In directory = {str(this_path)} \n- Size df = {len(df)} row x {len(df.columns)} columns \n- Columns = {[i for i in df.columns]}')
         logger.info(f"Data head =\n{df.head()}")
         # test START HERE
-
+   
         # test 2
         time.sleep(1)
         logger.info("Hellow World 1")

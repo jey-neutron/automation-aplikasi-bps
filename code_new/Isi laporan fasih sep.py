@@ -55,9 +55,9 @@ def RUN(ssoname, ssopass, pilihan_survei, df_name, rentang, close_ff = True):
     try:
         # cek df dulu
         columns_wajib = ['kec','date','status','utp_selesai']
-        logger.info(f'# Data yang mau dipake adalah {df_name}. Kolom wajib ada: {columns_wajib} ')
+        logger.info(f'Data yang mau dipake adalah {df_name}. Kolom wajib ada: {columns_wajib} ')
         # read df yang terpilih
-        logger.info("# Checking df")
+        logger.info("Checking df")
         df = pd.read_excel(str(this_path)+"/"+df_name, sheet_name=df_name.split(".")[0])
         columns_df = [x for x in columns_wajib if x in df.columns]
         logger.info(df.head())
@@ -70,19 +70,19 @@ def RUN(ssoname, ssopass, pilihan_survei, df_name, rentang, close_ff = True):
             notif.show_toast("Assign fasih PY", "ERROR HAPPEN :(", duration = 1)
             raise Exception(kataerror)
             #exit
-        
+        logger.info("Df valid")
         
         # Open mozilla
-        logger.info("# Opening mozilla ")
+        logger.info("Opening mozilla ")
         # add profile extension automa
         profile = webdriver.FirefoxProfile() 
         if Path("../automa-1.28.27.xpi").is_file():
             logger.info("with added extension")
             profile.add_extension(extension='../automa-1.28.27.xpi')
-        driver = webdriver.Firefox(executable_path = "../geckodriver.exe", firefox_profile=profile)
+        driver = webdriver.Firefox(executable_path = str(this_path)+"/"+"geckodriver.exe", firefox_profile=profile)
 
         # GET TO URL
-        logger.info("# Opening fasih-sm.bps.go.id, udah login vpn?")
+        logger.info("Opening fasih-sm.bps.go.id, udah login vpn?")
         #input('# Jika udah, PRESS ENTER')
         driver.get('https://fasih-sm.bps.go.id')
 
@@ -99,23 +99,28 @@ def RUN(ssoname, ssopass, pilihan_survei, df_name, rentang, close_ff = True):
 
         # wait until muncul pilihan survei
         time.sleep(10)
-        WebDriverWait(driver, 50).until( #using explicit wait for x seconds
-            EC.presence_of_element_located((By.CSS_SELECTOR, "h4.card-title")) #finding the element
+        WebDriverWait(driver,60).until( #using explicit wait for x seconds
+            #EC.presence_of_element_located((By.CSS_SELECTOR, "h4.card-title")) #finding the element
+            #EC.presence_of_element_located((By.CSS_SELECTOR, "div#Pencacahan_info")) #finding the element
+            EC.presence_of_element_located((By.XPATH, 'id("Pencacahan_info")')) #finding the element
         )
-        logger.info("# Searching the survey")
+        logger.info(f"Searching the survey from ({driver.find_element_by_xpath('id("Pencacahan_info")').text})")
         for i in range(1, int(driver.find_element_by_xpath('id("Pencacahan_info")').text.split(' ')[3] )):
             namasurveiweb = driver.find_element_by_xpath(f'id("Pencacahan")/TBODY[1]/TR[{i}]/TD[1]/A[1]').text
             if namasurveiweb == pilihan_survei:
                 break
-        logger.info("# Found it, opening link")
+        logger.info("Found nama survey, opening link")
         driver.find_element_by_xpath(f'id("Pencacahan")/TBODY[1]/TR[{i}]/TD[1]/A[1]').click()
         time.sleep(3)
+        #zoom
+        driver.execute_script("document.body.style.MozTransform='scale(0.7)';")
+        driver.execute_script("document.body.style.MozTransformOrigin='0 0';")
 
         # ALL run
         ikec = rentang
         if "-" in str(ikec):
-            ikec0 = int ( str(ikec).split[0] )
-            ikec1 = int ( str(ikec).split[1] )
+            ikec0 = int ( str(ikec).split('-')[0] )
+            ikec1 = int ( str(ikec).split('-')[1] )+1
         else :
             ikec0 = int(ikec)
             ikec1 = ikec0+1
@@ -123,13 +128,16 @@ def RUN(ssoname, ssopass, pilihan_survei, df_name, rentang, close_ff = True):
         #for ikec in range(2,7):
             # filter df per ikec duls
             dff = df[df.kec == ikec].reset_index()
-            logger.info("# Banyaknya data: "+ str(len(dff)))
+            logger.info("Banyaknya data: "+ str(len(dff)))
             # click link bersangkutan kec
             for row in range(0, 6):
                 #linkkec = driver.find_element_by_css_selector(f'.ng-star-inserted:nth-child({row+1}) > td:nth-child(2) > a')
+                WebDriverWait(driver,60).until( #using explicit wait for x seconds
+                    EC.presence_of_element_located((By.XPATH, f'id("assignmentDatatable")/TBODY[2]/TR[{row+1}]/TD[2]/A[1]')) #finding the element
+                )
                 linkkec = driver.find_element_by_xpath(f'id("assignmentDatatable")/TBODY[2]/TR[{row+1}]/TD[2]/A[1]')
                 if linkkec.text == f"51030{ikec}0":
-                    logger.info(f"# Found n goto link: href/{linkkec.text}")
+                    logger.info(f"Found n goto link: href/{linkkec.text}")
                     # goto link
                     #linkkec.click()
                     driver.get(str(linkkec.get_attribute("href")))
@@ -140,7 +148,7 @@ def RUN(ssoname, ssopass, pilihan_survei, df_name, rentang, close_ff = True):
             time.sleep(3)
             WebDriverWait(driver, 30).until(EC.presence_of_element_located((By.CSS_SELECTOR, "a.btn-primary")) ).click()
             ## wait till loading nya ilang
-            logger.info(f"# Loading form")
+            logger.info(f"Loading form")
             time.sleep(5)
             WebDriverWait(driver, 100).until(EC.invisibility_of_element_located((By.CSS_SELECTOR, '.loading-text > .ng-tns-c4183080771-2')))
             ## wait till rendering form
@@ -148,7 +156,11 @@ def RUN(ssoname, ssopass, pilihan_survei, df_name, rentang, close_ff = True):
             WebDriverWait(driver, 100).until(EC.invisibility_of_element_located((By.CSS_SELECTOR, 'p.mb-2')))
 
             # EDIT. link click
-            logger.info('# Click edit')
+            logger.info('Click edit')
+            try:
+                WebDriverWait(driver, 10).until(EC.invisibility_of_element_located((By.CSS_SELECTOR, 'a.btn-primary')))
+            except:
+                pass
             driver.find_element_by_css_selector('a.btn-primary').click()
             ## wait till loading nya ilang
             time.sleep(1)
@@ -157,25 +169,35 @@ def RUN(ssoname, ssopass, pilihan_survei, df_name, rentang, close_ff = True):
             time.sleep(1)
             WebDriverWait(driver, 100).until(EC.invisibility_of_element_located((By.CSS_SELECTOR, 'p.mb-2')))
 
-            logger.info("# Ngisi data... ")
+            logger.info("Ngisi data... ")
             for row in range(0, len(dff)):
                 #alt 1
                 #idbsweb = driver.find_element_by_xpath()
                 #alt 2
-                my_element_xpath = f'id("nested_nbs___container")/DIV[1]/DIV[2]/DIV[1]/DIV[1]/DIV[1]/TABLE[1]/TBODY[1]/TR[{row+1}]/TD[1]/DIV[1]'
-                ignored_exceptions=(NoSuchElementException,StaleElementReferenceException,)
-                WebDriverWait(driver, timeout=50, ignored_exceptions=ignored_exceptions)\
-                                        .until(expected_conditions.presence_of_element_located((By.XPATH, my_element_xpath)))
-                idbsweb = driver.find_element_by_xpath(my_element_xpath)
+                #my_element_xpath = f'id("nested_nbs___container")/DIV[1]/DIV[2]/DIV[1]/DIV[1]/DIV[1]/TABLE[1]/TBODY[1]/TR[{row+1}]/TD[1]/DIV[1]'
+                #ignored_exceptions=(NoSuchElementException,StaleElementReferenceException,)
+                #WebDriverWait(driver, timeout=60, ignored_exceptions=ignored_exceptions)\
+                #                        .until(expected_conditions.presence_of_element_located((By.XPATH, my_element_xpath)))
+                #idbsweb = driver.find_element_by_xpath(my_element_xpath)
+                #alt 3
+                #action_chain = ActionChains(driver)     
+                #action_chain.double_click(driver.find_element_by_xpath("//tr[2]/p")).perform()
+                #idbsweb = action_chain(driver.find_element_by_xpath(my_element_xpath))
+                try:
+                    idbsweb = driver.find_element_by_css_selector(f'#kdwil_nbs\#{row+1}___container .formgear-input-papi').get_attribute('value')
+                except:
+                    idbsweb = 'error getting data'
+                    pass
 
                 #if idbsweb.text == dff.idbs[row]:
                 #print(idbsweb.text, dff.idbs[row],idbsweb.text == dff.idbs[row])
-                logger.info(f"{row+1} {idbsweb.text} {idbsweb.text == dff.idbs[row]}")
-                if idbsweb.text != dff.idbs[row]:
-                    pesan = '# MAAF ROW "WEB FASIH" MA "DF" GA SAMA, BREAK DULU'
-                    logger.warning("WARN: "+pesan)
-                    notif.show_toast("Auto fasih PY", pesan, duration = 1)
-                    raise Exception(pesan)
+                #logger.info(f"{row+1} {idbsweb.text} {idbsweb.text == dff.idbs[row]} {dff.idbs[row]}")
+                logger.info(f"{row+1} {idbsweb} {dff.idbs[row]}")
+                # if idbsweb.text != dff.idbs[row]:
+                #     pesan = 'MAAF ROW "WEB FASIH" MA "DF" GA SAMA, BREAK DULU'
+                #     logger.warning("WARN: "+pesan)
+                #     notif.show_toast("Auto fasih PY", pesan, duration = 1)
+                #     raise Exception(pesan)
 
                 #do ngisi
                 time.sleep(1)
@@ -205,11 +227,14 @@ def RUN(ssoname, ssopass, pilihan_survei, df_name, rentang, close_ff = True):
             time.sleep(1)
             driver.find_element_by_css_selector('button.bg-teal-300').click()
             logger.warning("WARN: Attention, open terminal and firefox. Abistu balikin ke SURVEY COLLECTION trus open SURVEI PELAPORAN SEP")
-            pesan = "SUDAH SELEEE" if ikec != 6 else "I NEED UR ATTENTION"
+            pesan = "SUDAH SELEEE" if ikec == ikec1-1 else "20 SEC I NEED UR ATTENTION"
             notif.show_toast("Auto fasih PY", pesan, duration = 1)
-            input(f"{datetime.datetime.now()} | PAUSED, Input anything to continue")
+            confirm = input(f"{datetime.datetime.now()} | PAUSED, Input anything to continue")
+            if confirm:
+                print(f"{datetime.datetime.now()} | Dah kembali ke browser")
+            logger.info('Continuing next iteration')
+            time.sleep(20)
         logger.info('SELESEEEEE')
-        print(f"{datetime.datetime.now()} | Dah kembali ke browser")
         driver.close()
 
         # log
@@ -228,5 +253,8 @@ def RUN(ssoname, ssopass, pilihan_survei, df_name, rentang, close_ff = True):
         logger.error('WARN: Error happen')
         notif.show_toast("Auto fasih PY", "Error happen", duration = 1)
         if close_ff:
-            driver.close()
+            try:
+                driver.close()
+            except:
+                pass
         return (f"Error: {str(e)}, type error: {exc_type}, on file: {fname} on line {exc_tb.tb_lineno}")

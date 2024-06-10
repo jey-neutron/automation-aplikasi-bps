@@ -43,16 +43,16 @@ def desc():
 def RUN(ssoname, ssopass, pilihan_survei, df_name, rentang, close_ff=True):
     try:
         # Open mozilla
-        logger.info("# Opening mozilla ")
+        logger.info("Opening mozilla ")
         # add profile extension automa
         profile = webdriver.FirefoxProfile() 
         if Path("../automa-1.28.27.xpi").is_file():
             logger.info("with added extension")
             profile.add_extension(extension='../automa-1.28.27.xpi')
-        driver = webdriver.Firefox(executable_path = "../geckodriver.exe", firefox_profile=profile)
+        driver = webdriver.Firefox(executable_path = str(this_path)+"/"+"geckodriver.exe", firefox_profile=profile)
 
         # GET TO URL
-        logger.info("# Opening fasih-sm.bps.go.id, udah login vpn?")
+        logger.info("Opening fasih-sm.bps.go.id, udah login vpn?")
         #input('# Jika udah, PRESS ENTER')
         driver.get('https://fasih-sm.bps.go.id')
 
@@ -69,34 +69,36 @@ def RUN(ssoname, ssopass, pilihan_survei, df_name, rentang, close_ff=True):
 
         # wait until muncul pilihan survei
         time.sleep(10)
-        WebDriverWait(driver, 50).until( #using explicit wait for x seconds
-            EC.presence_of_element_located((By.CSS_SELECTOR, "h4.card-title")) #finding the element
+        WebDriverWait(driver,60).until( #using explicit wait for x seconds
+            #EC.presence_of_element_located((By.CSS_SELECTOR, "h4.card-title")) #finding the element
+            #EC.presence_of_element_located((By.CSS_SELECTOR, "div#Pencacahan_info")) #finding the element
+            EC.presence_of_element_located((By.XPATH, 'id("Pencacahan_info")')) #finding the element
         )
-        logger.info("# Searching the survey")
+        logger.info(f"Searching the survey from ({driver.find_element_by_xpath('id("Pencacahan_info")').text})")
         for i in range(1, int(driver.find_element_by_xpath('id("Pencacahan_info")').text.split(' ')[3] )):
             namasurveiweb = driver.find_element_by_xpath(f'id("Pencacahan")/TBODY[1]/TR[{i}]/TD[1]/A[1]').text
             if namasurveiweb == pilihan_survei:
                 break
-        logger.info("# Found it, opening link")
+        logger.info("Found nama survey, opening link")
         driver.find_element_by_xpath(f'id("Pencacahan")/TBODY[1]/TR[{i}]/TD[1]/A[1]').click()
         time.sleep(3)
 
         # RUN ALL
         jmlhead = driver.find_elements_by_xpath('id("assignmentDatatable")/THEAD[1]/TR[1]/TD')
-        logger.info(f"# Getting data with {len(jmlhead)} columns")
+        logger.info(f"Getting data with {len(jmlhead)} columns")
         #row_max = int(driver.find_element_by_css_selector('div#assignmentDatatable_info').text.split()[5]) # get num of all rows
         #numrow = 0 # initiate from row start (default value = 0)
         numpage = 1 # page number
 
         if "-" in str(rentang):
             numrow = int ( str(rentang).split[0] )
-            row_max = int ( str(rentang).split[1] )
+            row_max = int ( str(rentang).split[1] )+1
         else :
             numrow = int(rentang)
             row_max = int(driver.find_element_by_css_selector('div#assignmentDatatable_info').text.split()[5]) # get num of all rows
 
         # get isi
-        logger.info(f"# Getting from rows {numrow} until {row_max}")
+        logger.info(f"Getting from rows {numrow} until {row_max}")
         while numrow < row_max:
             #print("\npage: "+str(numpage))
             #print(" row progress:", end='')
@@ -134,5 +136,8 @@ def RUN(ssoname, ssopass, pilihan_survei, df_name, rentang, close_ff=True):
         logger.error('WARN: Error happen')
         notif.show_toast("Auto fasih PY", "Error happen", duration = 1)
         if close_ff:
-            driver.close()
+            try:
+                driver.close()
+            except:
+                pass
         return (f"Error: {str(e)}, type error: {exc_type}, on file: {fname} on line {exc_tb.tb_lineno}")
