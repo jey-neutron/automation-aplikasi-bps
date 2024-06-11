@@ -25,7 +25,7 @@ import sys
 logger = logging.getLogger(__name__)
 this_path = Path().resolve()
 from win10toast import ToastNotifier
-## notification for windows os
+# notification for windows os
 class MyToastNotifier(ToastNotifier):
     def __init__(self):
         super().__init__()
@@ -38,7 +38,7 @@ notif = MyToastNotifier()
 # for main view func
 def desc():
     # desc memuat keterangan program, sso buat apa, nama survei di fasih, dataframe used, rentang baris
-    return "1) Program untuk mendapatkan data sampel dari row fasih-sm \n 2) SSO untuk login fasih \n 3) Nama survei isiin survei yang mau diambil datanya, samain dengan nama di Fasih ya \n 4) File dataframe ga digunakan, isi terserah gapapa \n 5) Rentang baris isi 0 aja jika get sampel semuanya dari awal"
+    return "1) Program untuk mendapatkan data sampel dari row fasih-sm \n 2) SSO untuk login fasih \n 3) Nama survei isiin survei yang mau diambil datanya, samain dengan nama di Fasih ya \n 4) File dataframe ga digunakan, isi terserah gapapa \n 5) Rentang baris isi 0 aja jika get sampel semuanya dari awal (menandakan row keberapa di Fasih)"
 
 def RUN(ssoname, ssopass, pilihan_survei, df_name, rentang, close_ff=True):
     try:
@@ -92,7 +92,7 @@ def RUN(ssoname, ssopass, pilihan_survei, df_name, rentang, close_ff=True):
         # cek if pilih survei sudah oke
         periode_survei = Select(driver.find_element_by_css_selector('select.custom-select')).first_selected_option
         notif.show_toast("Assign fasih PY", "Cek periode survei", duration = 1)
-        logger.info(f"WARN: Cek dulu periode survei = {periode_survei.text} ?") #.getattributevalue
+        logger.info(f"WARN: Cek dulu periode survei = {periode_survei.text} ? Abaikan jika udah dicek") #.getattributevalue
         time.sleep(5)
 
         # RUN ALL

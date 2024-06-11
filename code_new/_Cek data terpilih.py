@@ -9,7 +9,7 @@ from pathlib import Path
 logger = logging.getLogger(__name__)
 this_path = Path().resolve()
 from win10toast import ToastNotifier
-## notification for windows os
+# notification for windows os
 class MyToastNotifier(ToastNotifier):
     def __init__(self):
         super().__init__()
@@ -18,6 +18,18 @@ class MyToastNotifier(ToastNotifier):
         return 0
 notif = MyToastNotifier()
 #notif.show_toast("Assign fasih PY", "YEYYY SELESE :)", duration = 1)
+# looprentang
+def getlistloop(rentang):
+    if "-" in str(rentang):
+        ikec0 = int ( str(rentang).split('-')[0] )
+        ikec1 = int ( str(rentang).split('-')[1] )+1
+        looprentang = range(ikec0,ikec1)
+    elif "," in str(rentang):
+        looprentang = str(rentang).split(',')
+        looprentang = [int(i) for i in looprentang]
+    elif int(rentang):
+        looprentang = range(int(rentang), int(rentang)+1)
+    return (looprentang)
 
 # for main view func
 def desc():
@@ -39,7 +51,10 @@ def RUN(ssoname, ssopass, pilihan_survei, df_name, rentang, close_ff=True):
         logger.info(f'Details of data selected: <br>- Filename : {str(df_name)}, {onsheet}<br>- In directory : {str(this_path)} <br>- Size df : {len(df)} row x {len(df.columns)} columns <br>- Columns : {[i for i in df.columns]} <br>')
         logger.info(f"DF= Data head :\n{df.head()}")
         # test START HERE
-        
+        import csv
+        with open("log "+pilihan_survei+'.csv','a',newline='') as fd:
+            writer = csv.writer(fd)
+            writer.writerow(['sdasd'])
         # test END HERE
         # test 2
         time.sleep(1)

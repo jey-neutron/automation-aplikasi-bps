@@ -27,7 +27,7 @@ logger = logging.getLogger(__name__)
 this_path = Path().resolve()
 #fd, path = tempfile.mkstemp(prefix="temp",dir=this_path)
 from win10toast import ToastNotifier
-## notification for windows os
+# notification for windows os
 class MyToastNotifier(ToastNotifier):
     def __init__(self):
         super().__init__()
@@ -36,6 +36,18 @@ class MyToastNotifier(ToastNotifier):
         return 0
 notif = MyToastNotifier()
 #notif.show_toast("Assign fasih PY", "YEYYY SELESE :)", duration = 1)
+# looprentang
+def getlistloop(rentang):
+    if "-" in str(rentang):
+        ikec0 = int ( str(rentang).split('-')[0] )
+        ikec1 = int ( str(rentang).split('-')[1] )+1
+        looprentang = range(ikec0,ikec1)
+    elif "," in str(rentang):
+        looprentang = str(rentang).split(',')
+        looprentang = [int(i) for i in looprentang]
+    elif int(rentang):
+        looprentang = range(int(rentang), int(rentang)+1)
+    return (looprentang)
 
 # func
 def writetemp_input(text):
@@ -124,7 +136,7 @@ def RUN(ssoname, ssopass, pilihan_survei, df_name, rentang, close_ff = True):
         # cek if pilih survei sudah oke
         periode_survei = Select(driver.find_element_by_css_selector('select.custom-select')).first_selected_option
         notif.show_toast("Assign fasih PY", "Cek periode survei", duration = 1)
-        logger.info(f"WARN: Cek dulu periode survei = {periode_survei.text} ?") #.getattributevalue
+        logger.info(f"WARN: Cek dulu periode survei = {periode_survei.text} ? Abaikan jika udah dicek") #.getattributevalue
         time.sleep(5)
 
         #zoom
@@ -132,14 +144,8 @@ def RUN(ssoname, ssopass, pilihan_survei, df_name, rentang, close_ff = True):
         driver.execute_script("document.body.style.MozTransformOrigin='0 0';")
 
         # ALL run
-        ikec = rentang
-        if "-" in str(ikec):
-            ikec0 = int ( str(ikec).split('-')[0] )
-            ikec1 = int ( str(ikec).split('-')[1] )+1
-        else :
-            ikec0 = int(ikec)
-            ikec1 = ikec0+1
-        for ikec in range(ikec0,ikec1):
+        looprentang = getlistloop(rentang)
+        for ikec in looprentang:
         #for ikec in range(2,7):
             # filter df per ikec duls
             dff = df[df.kec == ikec].reset_index()
@@ -248,7 +254,7 @@ def RUN(ssoname, ssopass, pilihan_survei, df_name, rentang, close_ff = True):
             time.sleep(1)
             driver.find_element_by_css_selector('button.bg-teal-300').click()
             logger.warning("WARN: Attention, open terminal and firefox. Abistu balikin ke SURVEY COLLECTION trus open SURVEI PELAPORAN SEP")
-            pesan = "SUDAH SELEEE" if ikec == ikec1-1 else "20 SEC I NEED UR ATTENTION"
+            pesan = "SUDAH SELEEE" if ikec == looprentang[-1] else "OPEN FIREFOX"
             notif.show_toast("Auto fasih PY", pesan, duration = 1)
             confirm = input(f"{datetime.datetime.now()} | PAUSED, Input anything to continue")
             if confirm:

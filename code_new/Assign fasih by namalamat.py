@@ -124,7 +124,7 @@ def RUN(ssoname, ssopass, pilihan_survei, df_name, rentang, close_ff=True):
         # cek if pilih survei sudah oke
         periode_survei = Select(driver.find_element_by_css_selector('select.custom-select')).first_selected_option
         notif.show_toast("Assign fasih PY", "Cek periode survei", duration = 1)
-        logger.info(f"WARN: Cek dulu periode survei = {periode_survei.text} ?") #.getattributevalue
+        logger.info(f"WARN: Cek dulu periode survei = {periode_survei.text} ? Abaikan jika udah dicek") #.getattributevalue
         time.sleep(5)
         #input(f"{datetime.datetime.now()} | Pilih survei yang mau diassign \n(sampe milih bulan kalau emang survei bulanan).\nJika udah, PRESS ENTER")
         #print(f"{datetime.datetime.now()} | Dah kembali ke browser)
