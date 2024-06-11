@@ -12,9 +12,9 @@ Tinggal edit beberapa di file [`_EDIT.py`](/_EDIT.py) lalu jalankan [`_RUN.bat`]
 
 ## BEBERAPA FITUR/CODE ###
 1. Ambil data row sampel di fasih
-2. Ambil data Fasih Review survei SKTNP (blm update)
+2. Ambil data Fasih Review survei SKTNP
 3. Ambil data Fasih Review Identifikasi SLS PODES (blm update)
-4. Assign by Selection Fasih menggunakan nama dan alamat sampel (blm update)
+4. Assign by Selection Fasih menggunakan nama dan alamat sampel
 5. Assign by Selection Fasih menggunakan ID Wilkerstat (blm update)
 6. Pelaporan SEP di fasih
 
