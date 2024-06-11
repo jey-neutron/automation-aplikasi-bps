@@ -139,6 +139,12 @@ def RUN(ssoname, ssopass, pilihan_survei, df_name, rentang, close_ff=True):
                     time.sleep(3)
                     WebDriverWait(driver, 100).until(EC.invisibility_of_element_located((By.CSS_SELECTOR, 'p.mb-2')))
 
+                    # init log file
+                    if not Path(f'{this_path}/log {pilihan_survei}_sampel.csv').exists():
+                        with open(f'log {pilihan_survei}_sampel.csv','w',newline='') as fd:
+                            writer = csv.writer(fd)
+                            writer.writerow(['timestamp', 'row', 'kec', 'desa', 'r105', 'r106', 'r17', 'r108', 'r109', 'r110', 'kbli', 'blok21satuan', 'blok21a', 'blok21b', 'blok21c', 'blok21d', 'blok21e', 'blok21f', 'blok22satuan', 'blok22a', 'blok22b', 'blok22c', 'blok22d', 'blok22e', 'blok22f', 'blok30satuan', 'blok30a', 'blok30b', 'blok30c', 'blok30d', 'blok30e', 'blok30f', 'blok31satuan', 'blok31a', 'blok31b', 'blok31c', 'blok31d', 'blok32e', 'blok32f', 'blok33satuan', 'blok33a', 'blok33b', 'blok33c', 'blok33d', 'blok33e', 'blok33f', 'blok34satuan', 'blok34a', 'blok34b', 'blok34c', 'blok34d', 'blok34e', 'blok34f', 'r401', 'r402a', 'r402b', 'r402c', 'r402d', 'r402e', 'r402f', 'r403', 'r403value', 'r404', 'r405', 'catatan'])
+                
                     logger.info("Getting data... ")
                     blok1 = ["","","","","","","","",""]
                     blok21 = ["","","","","","",""]
