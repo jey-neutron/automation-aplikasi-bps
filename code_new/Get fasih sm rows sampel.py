@@ -44,12 +44,16 @@ def RUN(ssoname, ssopass, pilihan_survei, df_name, rentang, close_ff=True):
     try:
         # Open mozilla
         logger.info("Opening mozilla ")
+        # add option mozilla
+        opts = webdriver.FirefoxOptions()
+        opts.add_argument("--width=1000")
+        opts.add_argument("--height=800")
         # add profile extension automa
         profile = webdriver.FirefoxProfile() 
         if Path("../automa-1.28.27.xpi").is_file():
             logger.info("with added extension")
             profile.add_extension(extension='../automa-1.28.27.xpi')
-        driver = webdriver.Firefox(executable_path = str(this_path)+"/"+"geckodriver.exe", firefox_profile=profile)
+        driver = webdriver.Firefox(executable_path = str(this_path)+"/"+"geckodriver.exe", firefox_profile=profile, options=opts)
 
         # GET TO URL
         logger.info("Opening fasih-sm.bps.go.id, udah login vpn?")
@@ -84,6 +88,12 @@ def RUN(ssoname, ssopass, pilihan_survei, df_name, rentang, close_ff=True):
         logger.info("Found nama survey, opening link")
         driver.find_element_by_xpath(f'id("Pencacahan")/TBODY[1]/TR[{i}]/TD[1]/A[1]').click()
         time.sleep(3)
+
+        # cek if pilih survei sudah oke
+        periode_survei = Select(driver.find_element_by_css_selector('select.custom-select')).first_selected_option
+        notif.show_toast("Assign fasih PY", "Cek periode survei", duration = 1)
+        logger.info(f"WARN: Cek dulu periode survei = {periode_survei.text} ?") #.getattributevalue
+        time.sleep(5)
 
         # RUN ALL
         # get jml kolom in sampel fasih

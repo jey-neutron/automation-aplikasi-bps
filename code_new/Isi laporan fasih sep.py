@@ -60,31 +60,37 @@ def RUN(ssoname, ssopass, pilihan_survei, df_name, rentang, close_ff = True):
         logger.info("Checking df")
         df = pd.read_excel(str(this_path)+"/"+df_name, sheet_name=df_name.split(".")[0])
         columns_df = [x for x in columns_wajib if x in df.columns]
-        logger.info(f'DF: {df.head()}')
+        logger.info(f"DF= Data head :\n{df.head()}")
         ## cek kolom data csv
         if columns_df != columns_wajib: 
             kataerror = '# Maaf data tidak memenuhi kriteria. \nKolom wajib ada: '+str(columns_wajib)+\
             '\nData anda: '+str([i for i in df.columns])+\
             '\nSilakan cek data kembali'
             logger.info("WARN: "+kataerror)
-            notif.show_toast("Assign fasih PY", "ERROR HAPPEN :(", duration = 1)
+            notif.show_toast("Auto fasih PY", "ERROR HAPPEN :(", duration = 1)
             raise Exception(kataerror)
             #exit
         logger.info("Df valid")
         
         # Open mozilla
         logger.info("Opening mozilla ")
+        # add option mozilla
+        opts = webdriver.FirefoxOptions()
+        opts.add_argument("--width=1000")
+        opts.add_argument("--height=800")
         # add profile extension automa
         profile = webdriver.FirefoxProfile() 
         if Path("../automa-1.28.27.xpi").is_file():
             logger.info("with added extension")
             profile.add_extension(extension='../automa-1.28.27.xpi')
-        driver = webdriver.Firefox(executable_path = str(this_path)+"/"+"geckodriver.exe", firefox_profile=profile)
+        driver = webdriver.Firefox(executable_path = str(this_path)+"/"+"geckodriver.exe", firefox_profile=profile, options=opts)
 
         # GET TO URL
         logger.info("Opening fasih-sm.bps.go.id, udah login vpn?")
         #input('# Jika udah, PRESS ENTER')
-        driver.get('https://fasih-sm.bps.go.id')
+        try:
+            driver.get('https://fasih-sm.bps.go.id')
+        except Exception as e: raise Exception ('Gabisa buka, maintenance ato blm make vpn ga? '+str(e))
 
         # Login SSO
         WebDriverWait(driver, 15).until( #using explicit wait for x seconds
@@ -114,6 +120,13 @@ def RUN(ssoname, ssopass, pilihan_survei, df_name, rentang, close_ff = True):
         logger.info("Found nama survey, opening link")
         driver.find_element_by_xpath(f'id("Pencacahan")/TBODY[1]/TR[{i}]/TD[1]/A[1]').click()
         time.sleep(3)
+
+        # cek if pilih survei sudah oke
+        periode_survei = Select(driver.find_element_by_css_selector('select.custom-select')).first_selected_option
+        notif.show_toast("Assign fasih PY", "Cek periode survei", duration = 1)
+        logger.info(f"WARN: Cek dulu periode survei = {periode_survei.text} ?") #.getattributevalue
+        time.sleep(5)
+
         #zoom
         driver.execute_script("document.body.style.MozTransform='scale(0.7)';")
         driver.execute_script("document.body.style.MozTransformOrigin='0 0';")
@@ -158,6 +171,9 @@ def RUN(ssoname, ssopass, pilihan_survei, df_name, rentang, close_ff = True):
             WebDriverWait(driver, 100).until(EC.invisibility_of_element_located((By.CSS_SELECTOR, 'p.mb-2')))
 
             # EDIT. link click
+            #zoom
+            driver.execute_script("document.body.style.MozTransform='scale(0.7)';")
+            driver.execute_script("document.body.style.MozTransformOrigin='0 0';")
             logger.info('Click edit')
             try:
                 WebDriverWait(driver, 10).until(EC.invisibility_of_element_located((By.CSS_SELECTOR, 'a.btn-primary')))
@@ -171,6 +187,9 @@ def RUN(ssoname, ssopass, pilihan_survei, df_name, rentang, close_ff = True):
             time.sleep(1)
             WebDriverWait(driver, 100).until(EC.invisibility_of_element_located((By.CSS_SELECTOR, 'p.mb-2')))
 
+            #zoom
+            driver.execute_script("document.body.style.MozTransform='scale(0.7)';")
+            driver.execute_script("document.body.style.MozTransformOrigin='0 0';")
             logger.info("Ngisi data... ")
             for row in range(0, len(dff)):
                 #alt 1
@@ -232,10 +251,10 @@ def RUN(ssoname, ssopass, pilihan_survei, df_name, rentang, close_ff = True):
             pesan = "SUDAH SELEEE" if ikec == ikec1-1 else "20 SEC I NEED UR ATTENTION"
             notif.show_toast("Auto fasih PY", pesan, duration = 1)
             confirm = input(f"{datetime.datetime.now()} | PAUSED, Input anything to continue")
-            time.sleep(20)
             if confirm:
-                print(f"{datetime.datetime.now()} | Dah kembali ke browser")
-            print(f"{datetime.datetime.now()} | Dah kembali ke browser")
+                print(f"{datetime.datetime.now()} | Dah kembali ke browser, terminal di minimize aja yah")
+            print(f"{datetime.datetime.now()} | Dah kembali ke browser, terminal di minimize aja yah")
+            time.sleep(20)
             logger.info('Continuing next iteration')
         logger.info('SELESEEEEE')
         driver.close()
