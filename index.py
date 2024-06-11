@@ -42,30 +42,32 @@ st.set_page_config(page_title="Auto Fasih", layout="wide", page_icon="🤖")
 next(sp0) # start spin on load web
 st.markdown("""
     <style>
-    .small-font {
-        font-size:12px;
-        font-style: italic;
-        color: #b1a7a6;
-    }
-    .colororange{
-        color: #fd971f;
-    }
-    .pre{
-        font-family: monospace;
-        font-size: 14px;
-    }
-    .stCodeBlock{
-        border-color: red
-    }
+        .small-font {
+            font-size:12px;
+            font-style: italic;
+            color: #b1a7a6;
+        }
+        .colororange{
+            color: #fd971f;
+        }
+        .pre{
+            font-family: monospace;
+            font-size: 14px;
+            color: #b1a7a6;
+        }
+        .stCodeBlock{
+            border-color: red
+        }
     </style>
 """, unsafe_allow_html=True) #css
 
 # Input Form filter 
 import _EDIT
 twocol = st.columns(2)
-with twocol[0]:
+with twocol[0].container():
     with st.container().form(key="form_sso"):
         st.subheader("Isi form ini dulu")
+        st.write("Baca deskripsi di samping yah untuk milih mana aja")
         usernamesso = st.text_input("Username SSO", _EDIT.sso_pegawai['username'])
         passwordsso = st.text_input("Password SSO", _EDIT.sso_pegawai['password'], type="password")
         st.markdown(
@@ -84,6 +86,10 @@ with twocol[0]:
                     opt_dfname.append(filename)
             #break
         df_name = st.selectbox("Pilih dataframe yang digunakan", options=opt_dfname, index=0)
+        st.markdown(
+            f'<p class="small-font">Edit dulu filenya di folder ini: <a href="{str(this_path)}">{str(this_path)}</a></p>',
+            unsafe_allow_html=True,
+        )
 
         # file program yang tersedia di folder directory
         opt_modul = []
@@ -94,7 +100,7 @@ with twocol[0]:
                 if ".py" in filename:
                     opt_modul.append(filename.split(".")[0])
             #break
-        opt_modul_selected = st.selectbox("Pilih yang ingin dikerjakan", options=opt_modul, index=0)
+        opt_modul_selected = st.selectbox("Pilih yang ingin dikerjakan", options=opt_modul, index=opt_modul.index('_Cek data terpilih'))
         st.markdown(
             f'<p class="small-font">Baca deskripsi program di view utama</p>',
             unsafe_allow_html=True,
@@ -116,9 +122,9 @@ with twocol[0]:
         )
 
         # rentang row yang ingin dijalankan
-        rentang = st.text_input('Ketik baris mana program mulai jalan', 1)
+        rentang = st.text_input('Opsional rentang baris atau rentang kolom', 1)
         st.markdown(
-            f'<p class="small-font">Isi 1 atau 0 berarti dari baris pertama <br> Isi 1-6 berarti dari baris 1-6 <br> Baca DESKRIPSI</p>',
+            f'<p class="small-font">Baris mana program mulai jalan/Kolom apa dimana (tergantung modul program terpilih) <br>- Isi 1 atau 0 berarti dari baris pertama <br>- Isi 1-6 berarti dari baris 1-6 <br>- Isi 4,5,7 berarti baris 4,5,7, Atau bisa juga kolom namasampel = 4 , alamat = 5, user saat ini = 7 <br> Lebih lanjut baca DESKRIPSI</p>',
             unsafe_allow_html=True,
         )
         # submit
@@ -126,7 +132,7 @@ with twocol[0]:
 
     reset_form = st.button('🛖 Stop/Reset', key='home', use_container_width=True)
 
-with twocol[1]:    
+with twocol[1].container():    
     # if submit form filter
     next(sp0,None)
     if submit_form:
@@ -232,7 +238,7 @@ with twocol[1]:
         st.caption("Ngerjain Fasih web atau web BPS lain secara otomatis")
         st.warning("Silakan mulai program dari sidebar")
         st.markdown("#### Nama Auto-program yang tersedia beserta deskripsinya:")
-        with st.container(height=350):
+        with st.container(height=630):
             st.write(modul_dict)
         #st.write({ 'dictA': {'key_1': 'value_1'},
         #        'dictB': {'key_2': 'value_2'}})
