@@ -18,6 +18,8 @@ import streamlit as st
 
 
 # config
+import warnings
+warnings.filterwarnings("ignore")
 # init spin
 def make_spinner(text="Loading..."):
     with st.spinner(text):
