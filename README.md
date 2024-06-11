@@ -1,4 +1,4 @@
-# automation-aplikasi-bps
+# 🤖 automation-aplikasi-bps
 Beberapa code untuk mengautomatisasi pekerjaan yang menggunakan aplikasi BPS berbasis web dengan **Selenium Python** [pake OS windows sih]
 <br>Contoh:
 - Get data dari FASIH-SM Review
