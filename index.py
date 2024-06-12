@@ -60,6 +60,11 @@ st.markdown("""
         .stCodeBlock{
             border-color: red
         }
+        .note{
+            border-radius: 0.2em;
+            background-color: #ff4b4b;
+            font-weight:bold;
+        }
     </style>
 """, unsafe_allow_html=True) #css
 
@@ -241,6 +246,12 @@ with twocol[1].container():
         st.warning("Silakan mulai program dari sidebar")
         st.markdown("#### Nama Auto-program yang tersedia beserta deskripsinya:")
         with st.container(height=630):
-            st.write(modul_dict)
+            #st.write(modul_dict)
+            #st.write(modul_dict.values())
+            num = 0
+            for key,val in zip(modul_dict.keys(), modul_dict.values()):
+                num+=1
+                st.expander(f'{str(num)}- {key}', expanded=True if key=='_Cek data terpilih' else False).markdown(val, unsafe_allow_html=True)
+
         #st.write({ 'dictA': {'key_1': 'value_1'},
         #        'dictB': {'key_2': 'value_2'}})
