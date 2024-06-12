@@ -51,10 +51,7 @@ def RUN(ssoname, ssopass, pilihan_survei, df_name, rentang, close_ff=True):
         logger.info(f'Details of data selected: <br>- Filename : {str(df_name)}, {onsheet}<br>- In directory : {str(this_path)} <br>- Size df : {len(df)} row x {len(df.columns)} columns <br>- Columns : {[i for i in df.columns]} <br>')
         logger.info(f"DF= Data head :\n{df.head()}")
         # test START HERE
-        import csv
-        with open("log "+pilihan_survei+'.csv','a',newline='') as fd:
-            writer = csv.writer(fd)
-            writer.writerow(['sdasd'])
+
         # test END HERE
         # test 2
         time.sleep(1)

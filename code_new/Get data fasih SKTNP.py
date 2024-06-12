@@ -88,11 +88,14 @@ def RUN(ssoname, ssopass, pilihan_survei, df_name, rentang, close_ff=True):
         )
         time.sleep(6)
         logger.info(f"Searching the survey from ({driver.find_element_by_xpath('id("Pencacahan_info")').text})")
-        for i in range(1, int(driver.find_element_by_xpath('id("Pencacahan_info")').text.split(' ')[3] )):
+        jmlsurvei = int(driver.find_element_by_xpath('id("Pencacahan_info")').text.split(' ')[3] )
+        for i in range(1, jmlsurvei):
             namasurveiweb = driver.find_element_by_xpath(f'id("Pencacahan")/TBODY[1]/TR[{i}]/TD[1]/A[1]').text
             if namasurveiweb == pilihan_survei:
                 break
-        logger.info("Found nama survey, opening link")
+            elif i==jmlsurvei: 
+                raise Exception('Survey not found')
+        logger.info(f"Found nama survey: {namasurveiweb} == {pilihan_survei}, opening link")
         driver.find_element_by_xpath(f'id("Pencacahan")/TBODY[1]/TR[{i}]/TD[1]/A[1]').click()
         time.sleep(3)
 
@@ -101,6 +104,10 @@ def RUN(ssoname, ssopass, pilihan_survei, df_name, rentang, close_ff=True):
         notif.show_toast("Assign fasih PY", "Cek periode survei", duration = 1)
         logger.info(f"WARN: Cek dulu periode survei = {periode_survei.text} ? Abaikan jika udah dicek") #.getattributevalue
         time.sleep(5)
+        # show 100 row
+        selectshow=Select(driver.find_element_by_xpath('id("assignmentDatatable_length")/LABEL[1]/SELECT[1]'))
+        selectshow.select_by_index(3)
+        time.sleep(2)
 
         # RUN ALL
         ## Gettin data FASIH-SM
@@ -144,7 +151,7 @@ def RUN(ssoname, ssopass, pilihan_survei, df_name, rentang, close_ff=True):
                         with open(f'log {pilihan_survei}_sampel.csv','w',newline='') as fd:
                             writer = csv.writer(fd)
                             writer.writerow(['timestamp', 'row', 'kec', 'desa', 'r105', 'r106', 'r17', 'r108', 'r109', 'r110', 'kbli', 'blok21satuan', 'blok21a', 'blok21b', 'blok21c', 'blok21d', 'blok21e', 'blok21f', 'blok22satuan', 'blok22a', 'blok22b', 'blok22c', 'blok22d', 'blok22e', 'blok22f', 'blok30satuan', 'blok30a', 'blok30b', 'blok30c', 'blok30d', 'blok30e', 'blok30f', 'blok31satuan', 'blok31a', 'blok31b', 'blok31c', 'blok31d', 'blok32e', 'blok32f', 'blok33satuan', 'blok33a', 'blok33b', 'blok33c', 'blok33d', 'blok33e', 'blok33f', 'blok34satuan', 'blok34a', 'blok34b', 'blok34c', 'blok34d', 'blok34e', 'blok34f', 'r401', 'r402a', 'r402b', 'r402c', 'r402d', 'r402e', 'r402f', 'r403', 'r403value', 'r404', 'r405', 'catatan'])
-                
+
                     logger.info("Getting data... ")
                     blok1 = ["","","","","","","","",""]
                     blok21 = ["","","","","","",""]

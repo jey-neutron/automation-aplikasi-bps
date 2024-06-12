@@ -125,11 +125,14 @@ def RUN(ssoname, ssopass, pilihan_survei, df_name, rentang, close_ff = True):
         )
         time.sleep(6)
         logger.info(f"Searching the survey from ({driver.find_element_by_xpath('id("Pencacahan_info")').text})")
-        for i in range(1, int(driver.find_element_by_xpath('id("Pencacahan_info")').text.split(' ')[3] )):
+        jmlsurvei = int(driver.find_element_by_xpath('id("Pencacahan_info")').text.split(' ')[3] )
+        for i in range(1, jmlsurvei):
             namasurveiweb = driver.find_element_by_xpath(f'id("Pencacahan")/TBODY[1]/TR[{i}]/TD[1]/A[1]').text
             if namasurveiweb == pilihan_survei:
                 break
-        logger.info("Found nama survey, opening link")
+            elif i==jmlsurvei: 
+                raise Exception('Survey not found')
+        logger.info(f"Found nama survey: {namasurveiweb} == {pilihan_survei}, opening link")
         driver.find_element_by_xpath(f'id("Pencacahan")/TBODY[1]/TR[{i}]/TD[1]/A[1]').click()
         time.sleep(3)
 
@@ -138,6 +141,10 @@ def RUN(ssoname, ssopass, pilihan_survei, df_name, rentang, close_ff = True):
         notif.show_toast("Assign fasih PY", "Cek periode survei", duration = 1)
         logger.info(f"WARN: Cek dulu periode survei = {periode_survei.text} ? Abaikan jika udah dicek") #.getattributevalue
         time.sleep(5)
+        # show 100 row
+        selectshow=Select(driver.find_element_by_xpath('id("assignmentDatatable_length")/LABEL[1]/SELECT[1]'))
+        selectshow.select_by_index(3)
+        time.sleep(2)
 
         #zoom
         driver.execute_script("document.body.style.MozTransform='scale(0.7)';")
@@ -185,6 +192,8 @@ def RUN(ssoname, ssopass, pilihan_survei, df_name, rentang, close_ff = True):
                 WebDriverWait(driver, 10).until(EC.invisibility_of_element_located((By.CSS_SELECTOR, 'a.btn-primary')))
             except:
                 pass
+            # scroll top
+            driver.execute_script("return arguments[0].scrollIntoView(true);", driver.find_element_by_css_selector('a.btn-primary'))
             driver.find_element_by_css_selector('a.btn-primary').click()
             ## wait till loading nya ilang
             time.sleep(1)

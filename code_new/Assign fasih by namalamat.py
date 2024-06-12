@@ -113,11 +113,14 @@ def RUN(ssoname, ssopass, pilihan_survei, df_name, rentang, close_ff=True):
         )
         time.sleep(6)
         logger.info(f"Searching the survey from ({driver.find_element_by_xpath('id("Pencacahan_info")').text})")
-        for i in range(1, int(driver.find_element_by_xpath('id("Pencacahan_info")').text.split(' ')[3] )):
+        jmlsurvei = int(driver.find_element_by_xpath('id("Pencacahan_info")').text.split(' ')[3] )
+        for i in range(1, jmlsurvei):
             namasurveiweb = driver.find_element_by_xpath(f'id("Pencacahan")/TBODY[1]/TR[{i}]/TD[1]/A[1]').text
             if namasurveiweb == pilihan_survei:
                 break
-        logger.info("Found nama survey, opening link")
+            elif i==jmlsurvei: 
+                raise Exception('Survey not found')
+        logger.info(f"Found nama survey: {namasurveiweb} == {pilihan_survei}, opening link")
         driver.find_element_by_xpath(f'id("Pencacahan")/TBODY[1]/TR[{i}]/TD[1]/A[1]').click()
         time.sleep(3)
 
@@ -128,6 +131,10 @@ def RUN(ssoname, ssopass, pilihan_survei, df_name, rentang, close_ff=True):
         time.sleep(5)
         #input(f"{datetime.datetime.now()} | Pilih survei yang mau diassign \n(sampe milih bulan kalau emang survei bulanan).\nJika udah, PRESS ENTER")
         #print(f"{datetime.datetime.now()} | Dah kembali ke browser)
+        # show 100 row
+        selectshow=Select(driver.find_element_by_xpath('id("assignmentDatatable_length")/LABEL[1]/SELECT[1]'))
+        selectshow.select_by_index(3)
+        time.sleep(2)
 
         ## !! Pilih kolom yang diperlukan untuk searching dan matching
         #nama x, alamat y, usersaatini z
