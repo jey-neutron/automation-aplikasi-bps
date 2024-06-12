@@ -38,7 +38,11 @@ notif = MyToastNotifier()
 # for main view func
 def desc():
     # desc memuat keterangan program, sso buat apa, nama survei di fasih, dataframe used, rentang baris
-    return "1) Program untuk mendapatkan data sampel dari row fasih-sm \n 2) SSO untuk login fasih \n 3) Nama survei isiin survei yang mau diambil datanya, samain dengan nama di Fasih ya \n 4) File dataframe ga digunakan, isi terserah gapapa \n 5) Rentang baris isi 0 aja jika get sampel semuanya dari awal (menandakan row keberapa di Fasih)"
+    return """1) Program untuk mendapatkan data sampel dari row Fasih-sm 
+2) SSO untuk login fasih 
+3) Nama survei isiin survei yang mau diambil datanya, samain dengan nama di Fasih ya 
+4) File dataframe ga digunakan, isi terserah gapapa 
+5) Rentang baris isi `0` aja jika get sampel semuanya dari awal (menandakan row keberapa di Fasih) <br> *[Sementara format yang bisa adalah `a` atau `a-c`. Jika masukin format `a,b,c` maka akan error]*"""
 
 def RUN(ssoname, ssopass, pilihan_survei, df_name, rentang, close_ff=True):
     try:

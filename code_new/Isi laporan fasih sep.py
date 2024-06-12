@@ -61,7 +61,11 @@ def cek_input(namafile='temp_input.txt'):
 # for main view func
 def desc():
     # desc memuat keterangan program, sso buat apa, nama survei di fasih, dataframe used, rentang baris
-    return "1) Program untuk ngisi laporan SEP di Fasih-sm \n 2) SSO untuk login Fasih \n 3) Nama survei isiin SURVEI PELAPORAN LAPANGAN SEP 2024 \n 4) CSV gunakan assign_cawi, tapi harus diedit tiap saat yah sebelum run program dan nama sheetnya samain nama file \n Kolom df: 'kec' adalah kode kec dalam int, 'date' adalah date now dengan format 'dd mm yyyy', 'status' kode status dalam int, 'utp_selesai' jml int utp selesai \n 5) Rentang baris menandakan kode kec. Amannya satu2 karna Fasihnya perlu kode antirobot"
+    return """1) Program untuk ngisi laporan SEP di Fasih-sm 
+2) SSO untuk login Fasih 
+3) Nama survei isiin `SURVEI PELAPORAN LAPANGAN SEP 2024`
+4) Dataframe CSV gunakan `assign_cawi`, tapi harus diedit tiap saat yah sebelum run program dan nama sheetnya samain nama file <br> Kolom df: `'kec'` adalah kode kec dalam integer, `'date'` adalah date now dengan format `'dd mm yyyy'`, `'status'` kode status dalam integer, `'utp_selesai'` jml utp selesai dalam integer
+5) Rentang baris menandakan `kode kec`. Amannya satu2 karna Fasihnya perlu kode antirobot, tapi bisa multikec pakai koma atau rentang"""
 
 def RUN(ssoname, ssopass, pilihan_survei, df_name, rentang, close_ff = True):
     try:

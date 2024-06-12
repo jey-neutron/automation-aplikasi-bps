@@ -48,7 +48,11 @@ def getlistloop(rentang):
 # for main view func
 def desc():
     # desc memuat keterangan program, sso buat apa, nama survei di fasih, dataframe used, rentang baris
-    return "1) Program untuk auto assign by selection di Fasih berdasarkan csv \n 2) SSO untuk login Fasih \n 3) Nama survei isiin survei yang mau diassign, samain dengan nama di Fasih ya \n 4) CSV gunakan assign_daftar, tapi harus diedit tiap saat yah sebelum run program \n Kolom df: 'nm_sampel', 'alamat', 'email_petugas', 'usersso_pengawas' \n NOTE!!!!! Untuk 'usersso_pengawas' kalo pengawasnya organik, isiin tanpa '@bps.go.id' yah \n 5) NOTE!!!!! Rentang kolom isi 'x,y,z' \n Nomor kolom x = kolom nama sampel \n Nomor kolom y = kolom alamat \n Nomor kolom z = kolom user saat ini \n Liat di Fasih berarti, kolom centang paling kiri adalah nomor kolom 1"
+    return """1) Program untuk auto assign by selection di Fasih berdasarkan CSV dataframe
+2) SSO untuk login Fasih
+3) Nama survei isiin survei yang mau diassign, samain dengan nama di Fasih ya
+4) Dataframe CSV gunakan `assign_daftar`, tapi harus diedit tiap saat yah sebelum run program <br> Kolom df: `'nm_sampel'`, `'alamat'`, `'email_petugas'`, `'usersso_pengawas'` 
+5) <span class='note'> NOTE!!!!! </span> Rentang kolom isi  nomor kolom di Fasih, format: `'x,y,z'` <br>Nomor kolom `x` = kolom nama sampel <br>Nomor kolom `y` = kolom alamat <br>Nomor kolom `z` = kolom user saat ini <br>Liat di Fasih berarti, kolom centang paling kiri adalah nomor kolom `1`"""
 
 def RUN(ssoname, ssopass, pilihan_survei, df_name, rentang, close_ff=True):
     try:
@@ -71,6 +75,11 @@ def RUN(ssoname, ssopass, pilihan_survei, df_name, rentang, close_ff=True):
             #exit
         logger.info("Df valid")
         df['result_log'] = np.nan
+        df.loc[df.usersso_pengawas.str.contains('@bps.go.id'), 'usersso_pengawas'] = df.usersso_pengawas.str.strip('@')[0]
+
+        ## !! Pilih kolom yang diperlukan untuk searching dan matching
+        #nama x, alamat y, usersaatini z
+        kolomnama, kolomalamat, kolomuser = getlistloop(rentang)
 
         # Open mozilla
         logger.info("Opening mozilla ")

@@ -45,7 +45,12 @@ def getlistloop(rentang):
 # for main view func
 def desc():
     # desc memuat keterangan program, sso buat apa, nama survei di fasih, dataframe used, rentang baris
-    return "1) Program untuk mendapatkan data dari isian fasih \n 2) SSO untuk login Fasih \n 3) Nama survei isiin SKTNP 2024 (sesuaiin Fasih) \n NOTE!!!!! Lapus kode 10 dan 17 blm pernah ada, jadi mungkin beda data yang terambil \n 4) File dataframe ga digunakan, isi terserah gapapa \n 5) Rentang baris isi 1 aja jika get sampel semuanya dari awal (menandakan row keberapa di Fasih) [Sementara blm berguna sih, baru ditampilin 1-jml row ditampilin aja sih]"
+    return """1) Program untuk mendapatkan data dari isian fasih 
+2) SSO untuk login Fasih 
+3) Nama survei isiin `SKTNP 2024` (sesuaiin Fasih) <br> <span class='note'> NOTE!!!!! </span> Lapus kode `10` dan `17` blm pernah ada, jadi mungkin data yang lapusnya itu, data terambilnya beda
+4) File dataframe ga digunakan, isi terserah gapapa
+5) Rentang baris isi `1` aja jika get sampel semuanya dari awal (menandakan row keberapa di Fasih) <br> *[Sementara blm berguna sih, baru ditampilin `1-jml row ditampilin` aja]*
+"""
 
 def RUN(ssoname, ssopass, pilihan_survei, df_name, rentang, close_ff=True):
     try:
