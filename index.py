@@ -135,9 +135,23 @@ with twocol[0].container():
             unsafe_allow_html=True,
         )
         # submit
-        submit_form = st.form_submit_button("🏇 RUN Program", type="primary", use_container_width=True)
+        def goto(url):
+            open_script= """
+                <script type="text/javascript">
+                    var elmnt = document.getElementById('%s');
+                    elmnt.scrollIntoView({
+                        behavior: "smooth", 
+                        block: "start",
+                        inline: "nearest"
+                    });
+                </script>
+            """ % (url)
+            html(open_script)
+        submit_form = st.form_submit_button("🏇 RUN Program", type="primary", use_container_width=True, on_click=goto, args=('#isi-form-ini-dulu',))
 
+    #st.markdown("[top](#isi-form-ini-dulu)", unsafe_allow_html=True)
     reset_form = st.button('🛖 Stop/Reset', key='home', use_container_width=True)
+    #st.button('goto', on_click=goto, args=('#isi-form-ini-dulu',))
 
 with twocol[1].container():    
     # if submit form filter
