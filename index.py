@@ -130,7 +130,7 @@ with twocol[0].container():
         )
 
         # rentang row yang ingin dijalankan
-        rentang = st.text_input('Opsional rentang baris atau rentang kolom', 1)
+        rentang = st.text_input('Rentang baris atau rentang kolom', 1)
         st.markdown(
             f'<p class="small-font">Baris mana program mulai jalan/Kolom apa dimana (tergantung modul program terpilih) <br>- Isi 1 atau 0 berarti dari baris pertama <br>- Isi 1-6 berarti dari baris 1-6 <br>- Isi 4,5,7 berarti baris 4,5,7, Atau bisa juga kolom namasampel = 4 , alamat = 5, user saat ini = 7 <br> Lebih lanjut baca DESKRIPSI</p>',
             unsafe_allow_html=True,
