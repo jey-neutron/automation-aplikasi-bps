@@ -232,7 +232,7 @@ def RUN(ssoname, ssopass, pilihan_survei, df_name, rentang, close_ff = True):
                 #if idbsweb.text == dff.idbs[row]:
                 #print(idbsweb.text, dff.idbs[row],idbsweb.text == dff.idbs[row])
                 #logger.info(f"{row+1} {idbsweb.text} {idbsweb.text == dff.idbs[row]} {dff.idbs[row]}")
-                logger.info(f"{row+1} {idbsweb} {dff.idbs[row]}")
+                logger.info(f"{row+1}/{str(len(dff))} {idbsweb} {dff.idbs[row]}")
                 # if idbsweb.text != dff.idbs[row]:
                 #     pesan = 'MAAF ROW "WEB FASIH" MA "DF" GA SAMA, BREAK DULU'
                 #     logger.warning("WARN: "+pesan)
@@ -269,7 +269,7 @@ def RUN(ssoname, ssopass, pilihan_survei, df_name, rentang, close_ff = True):
             logger.warning("WARN: Attention, open terminal and firefox. Abistu balikin ke SURVEY COLLECTION trus open SURVEI PELAPORAN SEP")
             pesan = "SUDAH SELEEE" if ikec == looprentang[-1] else "OPEN FIREFOX"
             notif.show_toast("Auto fasih PY", pesan, duration = 1)
-            confirm = input(f"{datetime.datetime.now()} | PAUSED, Input anything to continue")
+            confirm = input(f"{datetime.datetime.now()} | PAUSED, ending of '0{ikec}0', Input 'enter' to continue")
             if confirm:
                 print(f"{datetime.datetime.now()} | Dah kembali ke browser, terminal di minimize aja yah")
             print(f"{datetime.datetime.now()} | Dah kembali ke browser, terminal di minimize aja yah")
