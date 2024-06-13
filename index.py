@@ -95,7 +95,7 @@ with twocol[0].container():
             #break
         df_name = st.selectbox("Pilih dataframe yang digunakan", options=opt_dfname, index=0)
         st.markdown(
-            f'<p class="small-font">Edit dulu filenya di folder ini: <a href="{str(this_path)}">{str(this_path)}</a></p>',
+            f'<p class="small-font">Liat deskripsi & edit dulu filenya di folder ini: <a href="{str(this_path)}">{str(this_path)}</a></p>',
             unsafe_allow_html=True,
         )
 
@@ -164,7 +164,7 @@ with twocol[1].container():
         #import streamlit.components.v1 as components
         
         # WELCOME TO AUTO FASIH
-        st.caption(f'Hellow "{usernamesso.split(".")[0]}", kamu memilih: ')
+        st.caption(f'Hellow ":orange[{usernamesso.split(".")[0]}]", kamu memilih: ')
         st.title("Autoin: "+opt_modul_selected)
         st.markdown(f'Deskripsi program: <span class="colororange">{modul_dict[opt_modul_selected].split(")")[1][:-1]}</span>'  , unsafe_allow_html=True) 
         # LALALLALA PR: nanti ada deskripsi di tiap2 program n rewrite program yak
@@ -266,7 +266,7 @@ with twocol[1].container():
             num = 0
             for key,val in zip(modul_dict.keys(), modul_dict.values()):
                 num+=1
-                st.expander(f'{str(num)}- {key}', expanded=True if key=='_Cek data terpilih' else False).markdown(val, unsafe_allow_html=True)
+                st.expander(f':orange[{str(num)}- {key}]', expanded=True if key=='_Cek data terpilih' else False).markdown(val, unsafe_allow_html=True)
 
         #st.write({ 'dictA': {'key_1': 'value_1'},
         #        'dictB': {'key_2': 'value_2'}})
