@@ -269,7 +269,7 @@ def RUN(ssoname, ssopass, pilihan_survei, df_name, rentang, close_ff = True):
             logger.warning("WARN: Attention, open terminal and firefox. Abistu balikin ke SURVEY COLLECTION trus open SURVEI PELAPORAN SEP")
             pesan = "SUDAH SELEEE" if ikec == looprentang[-1] else "OPEN FIREFOX"
             notif.show_toast("Auto fasih PY", pesan, duration = 1)
-            confirm = input(f"{datetime.datetime.now()} | PAUSED, ending of '0{ikec}0', Input 'enter' to continue")
+            confirm = input(f"{datetime.datetime.now()} | PAUSED, ending of '0{ikec}0', Press 'enter' to continue")
             if confirm:
                 print(f"{datetime.datetime.now()} | Dah kembali ke browser, terminal di minimize aja yah")
             print(f"{datetime.datetime.now()} | Dah kembali ke browser, terminal di minimize aja yah")
