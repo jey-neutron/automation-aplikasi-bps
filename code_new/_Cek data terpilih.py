@@ -47,7 +47,7 @@ def RUN(ssoname, ssopass, pilihan_survei, df_name, rentang, close_ff=True):
             onsheet = ''
         elif ".xlsx" in str(df_name):
             df = pd.read_excel(str(this_path)+"/"+df_name, sheet_name=df_name.split(".")[0])
-            onsheet = f" onsheet: {df_name.split(".")[0]} "
+            onsheet = f' onsheet: {df_name.split(".")[0]} '
         logger.info(f'Details of data selected: <br>- Filename : {str(df_name)}, {onsheet}<br>- In directory : {str(this_path)} <br>- Size df : {len(df)} row x {len(df.columns)} columns <br>- Columns : {[i for i in df.columns]} <br>')
         logger.info(f"DF= Data head :\n{df.head()}")
         # test START HERE
