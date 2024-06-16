@@ -92,7 +92,7 @@ def RUN(ssoname, ssopass, pilihan_survei, df_name, rentang, close_ff=True):
             EC.presence_of_element_located((By.XPATH, 'id("Pencacahan_info")')) #finding the element
         )
         time.sleep(6)
-        logger.info(f"Searching the survey from ({driver.find_element_by_xpath('id("Pencacahan_info")').text})")
+        logger.info("Searching the survey from ("+driver.find_element_by_xpath('id("Pencacahan_info")').text+")")
         jmlsurvei = int(driver.find_element_by_xpath('id("Pencacahan_info")').text.split(' ')[3] )
         for i in range(1, jmlsurvei):
             namasurveiweb = driver.find_element_by_xpath(f'id("Pencacahan")/TBODY[1]/TR[{i}]/TD[1]/A[1]').text
