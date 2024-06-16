@@ -117,16 +117,18 @@ with twocol[0].container():
         modul_desc = []
         dir_path = os.path.dirname(os.path.realpath(__file__))
         sys.path.append(dir_path+'/code_new')
+        #
+        desc=[]
         for modul_name in opt_modul:
             try:
-                desc = "ada"
+                desc.append("ada")
                 modul = __import__(modul_name)
                 modul_desc.append(modul.desc())
             except Exception as e:
-                desc = "Err: "+ str(e)
-                modul_desc.aplend(modul_name)
-        if desc != "ada":
-            st.warning("Error getting description program,"+desc)
+                desc.append("Err: "+ str(e))
+                modul_desc.append(":"+modul_name)
+        if desc[1] != "ada":
+            st.warning("Error getting description program,"+desc[1])
         modul_dict = dict(zip(opt_modul,modul_desc))  
 
         # argumen modul
