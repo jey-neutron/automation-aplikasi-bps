@@ -208,8 +208,8 @@ with twocol[1].container():
                 #         os.remove((this_path)+f"/temp_input.txt")
                 #         b = st.checkbox("Tick me jika sudah ngecek Firefox", disabled=True)
                     return()
-                if 'WARN' in logtext:
-                    return st.warning(f"{datetime.datetime.now().strftime('%H:%M:%S')} | {str(logtext).split(':')[1]}")
+                #if 'WARN' in logtext:
+                #    return st.warning(f"{datetime.datetime.now().strftime('%H:%M:%S')} | {str(logtext).split(':')[1]}")
                 elif 'DF' in logtext:
                     return st.text(f"{datetime.datetime.now().strftime('%H:%M:%S')} | {str(logtext).split('=')[1]}")
                 txt = f"{datetime.datetime.now().strftime('%H:%M:%S')} | {str(logtext)}"
