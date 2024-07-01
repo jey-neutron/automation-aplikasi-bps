@@ -84,20 +84,29 @@ with twocol[0].container():
         )
         
         # df name
-        #df = pd.read_excel("../assign_cawi.xlsx", sheet_name="assign_cawi")
-        opt_dfname = []
-        for (dirpath, dirnames, filenames) in walk( str(this_path), topdown=True):
-            dirnames[:] = [d for d in dirnames if d not in set(['__pycache__','.venv','.vscode','code','code_new'])]
-            for filename in filenames:
-                # only get .py file
-                if ((".xlsx" in filename) or ('csv' in filename)):
-                    opt_dfname.append(filename)
-            #break
-        df_name = st.selectbox("Pilih dataframe yang digunakan", options=opt_dfname, index=0)
+        # df = pd.read_excel("../assign_cawi.xlsx", sheet_name="assign_cawi")
+        # opt_dfname = []
+        # for (dirpath, dirnames, filenames) in walk( str(this_path), topdown=True):
+        #     dirnames[:] = [d for d in dirnames if d not in set(['__pycache__','.venv','.vscode','code','code_new'])]
+        #     for filename in filenames:
+        #         # only get .py file
+        #         if ((".xlsx" in filename) or ('csv' in filename)):
+        #             opt_dfname.append(filename)
+        #     #break
+        # df_name = st.selectbox("Pilih dataframe yang digunakan", options=opt_dfname, index=0)
+        # st.markdown(
+        #     f'<p class="small-font">Liat deskripsi & edit dulu filenya di folder ini: <a href="{str(this_path)}">{str(this_path)}</a></p>',
+        #     unsafe_allow_html=True,
+        # )
+        df_name = st.text_input("Ketik spreadsheetID yang digunakan", _EDIT.sso_pegawai['sheetID'])
+        linkgsheet = f"https://docs.google.com/spreadsheets/d/{df_name}"
         st.markdown(
-            f'<p class="small-font">Liat deskripsi & edit dulu filenya di folder ini: <a href="{str(this_path)}">{str(this_path)}</a></p>',
+            f'<p class="small-font">Liat deskripsi & edit dulu filenya di link ini: <a href="{linkgsheet}">{linkgsheet}</a></p>',
             unsafe_allow_html=True,
         )
+
+        # sheet name 
+        sheet_name = st.text_input("Ketik nama sheet yang digunakan",  _EDIT.sso_pegawai['sheetname'])
 
         # file program yang tersedia di folder directory
         opt_modul = []
@@ -117,18 +126,9 @@ with twocol[0].container():
         modul_desc = []
         dir_path = os.path.dirname(os.path.realpath(__file__))
         sys.path.append(dir_path+'/code_new')
-        #
-        desc=[]
         for modul_name in opt_modul:
-            try:
-                desc.append("ada")
-                modul = __import__(modul_name)
-                modul_desc.append(modul.desc())
-            except Exception as e:
-                desc.append("Err: "+ str(e))
-                modul_desc.append(":"+modul_name)
-        if desc[1] != "ada":
-            st.warning("Error getting description program,"+desc[1])
+            modul = __import__(modul_name)
+            modul_desc.append(modul.desc())
         modul_dict = dict(zip(opt_modul,modul_desc))  
 
         # argumen modul
@@ -250,7 +250,7 @@ with twocol[1].container():
         placeholder_log = st.container(height=490)
         #st.code(logger.callHandlers())
         try:
-            hasil_run = program_selected.RUN(usernamesso, passwordsso, pilihan_survei, df_name, rentang, close_ff=_EDIT.sso_pegawai['close_firefox_on_error'])
+            hasil_run = program_selected.RUN(usernamesso, passwordsso, pilihan_survei, df_name, sheet_name, rentang, close_ff=_EDIT.sso_pegawai['close_firefox_on_error'])
             #with st.container(height=350):        
                 #next(sp) # starts spin
             if "Error" in hasil_run:
