@@ -163,6 +163,8 @@ def RUN(ssoname, ssopass, pilihan_survei, df_name, rentang, close_ff=True):
         rowgada = 0
         count_gagal_sebelum_nyerah = 50 #perlu dicustom lagi si
         ## jika gagal loop terus :""
+        listtimegagal = [] #untuk save time kegagalan
+        listgagal = [] #untuk save index row yg gagal
         time.sleep(1)
         #notif.show_toast("Assign fasih PY", "I Need U to PRESS ENTER :(", duration = 1)
         #input("# PRESS ENTER to Start Assigning")
@@ -174,7 +176,7 @@ def RUN(ssoname, ssopass, pilihan_survei, df_name, rentang, close_ff=True):
                 for dfrow in range(start,end): ## loop row df
                     ## Search by namalamat
                     now = datetime.datetime.now()
-                    logger.info(f"{df.index[dfrow]}| {df.nm_sampel[dfrow]} , {str(df.alamat[dfrow])[:20]}")
+                    logger.info(f"{df.index[dfrow]}/{len(df)} {df.nm_sampel[dfrow]} , {str(df.alamat[dfrow])[:20]}")
                     searchbar = driver.find_element_by_xpath('id("assignmentDatatable_filter")/LABEL[1]/INPUT[1]')
                     searchbar.clear()
                     searchbar.send_keys(df.nm_sampel[dfrow], Keys.RETURN)
@@ -305,22 +307,35 @@ def RUN(ssoname, ssopass, pilihan_survei, df_name, rentang, close_ff=True):
             ## jika gagal print error
             except Exception as e:
                 logger.info('⚠️Error terjadi: '+str(e))
+                listtimegagal.append(now)
+                listgagal.append(df.index[dfrow])
                 start = dfrow-1
                 if start <0: start = 0
                 gagal += 1
-                logger.info('Gagal: '+str(gagal))
+                logger.info(f'Gagal: {str(gagal)}, 6 list index gagal: {listgagal}')
                 ## lemme ngitung diff time each attempt yang gagal. 
                 ## 7annya cuman pengen kalo 5x attempt gagal waktunya cuman < 3s maka BREAK, biar ga lama2 sampe 100 baru break
-                listgagal = []
-                listgagal.append(now)
                 difftime = 4
-                if len(listgagal)>5:
-                    listgagal.pop(0) #remove timegagal index pertama
-                    diff = listgagal[4]-listgagal[0] #itung delta time
+                if len(listtimegagal)>5:
+                    listtimegagal.pop(0) #remove timegagal index pertama
+                    listgagal.pop(0) #remove index row yang pertama yg gagal
+                    diff = listtimegagal[4]-listtimegagal[0] #itung delta time
                     #difftime = divmod(diff.days * seconds_in_day + diff.seconds, 1)[0]
                     difftime = diff.seconds
+                
+                if(len(set(listgagal))==1 and len(listgagal)>4): #jika gagal lebih dari 4x di index row itu, maka skip aja da
+                    df.loc[df.index[dfrow], 'result_log'] = 'error ketika assign, manual aja'
+                    start = dfrow+1
+                    logger.info('Continuing aja')
+                    continue 
 
-                if gagal%3 == 0 :
+                if ((gagal > count_gagal_sebelum_nyerah) or (difftime<3) ): # jika gagal lebih dari threshold maka errorin aja OR !! jika different time gagalnya gagal maka remove aja OR blabla nya
+                    #Audio(sound_file, autoplay=True)
+                    logger.info("WARN: Gagal "+str(gagal)+"X, ada yang salah inih. Dahla nyerah: "+str(e))
+                    notif.show_toast("Assign fasih PY", "ERROR HAPPEN :(", duration = 1)
+                    raise Exception("Gagal "+str(gagal)+"X, ada yang salah inih. Dahla nyerah: "+str(e))
+
+                if gagal%3 == 0 : #jika gagal 3x reload trs run ulang
                     logger.info('Refreshing')
                     driver.refresh()
                     time.sleep(5)
@@ -330,18 +345,17 @@ def RUN(ssoname, ssopass, pilihan_survei, df_name, rentang, close_ff=True):
                     #notif.show_toast("Assign fasih PY", "I Need U to MILIH SURVEY lagi :(", duration = 1)
                     logger.info("Periode Survei benar?: "+str( Select(driver.find_element_by_css_selector('select.custom-select')).first_selected_option.text ))
                     # show 100 row
-                    selectshow=Select(driver.find_element_by_xpath('id("assignmentDatatable_length")/LABEL[1]/SELECT[1]'))
-                    selectshow.select_by_index(3)
+                    try:
+                        selectshow=Select(driver.find_element_by_xpath('id("assignmentDatatable_length")/LABEL[1]/SELECT[1]'))
+                        selectshow.select_by_index(3)
+                    except:
+                        pass
                     time.sleep(5)
                     logger.info("Restart lagi at row: "+str(start))
                     WebDriverWait(driver, 15).until( #using explicit wait for x seconds
                         EC.presence_of_element_located((By.CSS_SELECTOR, 'td.sorting_disabled:nth-child(2)')) )
                     continue
-                if ((gagal > count_gagal_sebelum_nyerah) or (difftime<3)): #!! jika different time gagalnya gagal maka remove aja OR blabla nya
-                    #Audio(sound_file, autoplay=True)
-                    logger.info("WARN: Gagal "+str(gagal)+"X, ada yang salah inih. Dahla nyerah: "+str(e))
-                    notif.show_toast("Assign fasih PY", "ERROR HAPPEN :(", duration = 1)
-                    raise Exception("Gagal "+str(gagal)+"X, ada yang salah inih. Dahla nyerah: "+str(e))
+
                     
                 logger.info("Restart lagi at row: "+str(start))
                 continue
