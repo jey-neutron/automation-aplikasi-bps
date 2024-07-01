@@ -64,10 +64,10 @@ def desc():
     return """1) Program untuk ngisi laporan SEP di Fasih-sm 
 2) SSO untuk login Fasih 
 3) Nama survei isiin `SURVEI PELAPORAN LAPANGAN SEP 2024`
-4) Dataframe CSV gunakan `assign_cawi`, tapi harus diedit tiap saat yah sebelum run program dan nama sheetnya samain nama file <br> Kolom df: `'kec'` adalah kode kec dalam integer, `'date'` adalah date now dengan format `'dd mm yyyy'`, `'status'` kode status dalam integer, `'utp_selesai'` jml utp selesai dalam integer
+4) Gsheet masukkan sheetID dan sheetname, tapi harus diedit tiap saat yah sebelum run program <br> Kolom df: `'kec'` adalah kode kec dalam integer, `'date'` adalah date now dengan format `'dd mm yyyy'`, `'status'` kode status dalam integer, `'utp_selesai'` jml utp selesai dalam integer
 5) Rentang baris menandakan `kode kec`. Amannya satu2 karna Fasihnya perlu kode antirobot, tapi bisa multikec pakai koma atau rentang"""
 
-def RUN(ssoname, ssopass, pilihan_survei, df_name, rentang, close_ff = True):
+def RUN(ssoname, ssopass, pilihan_survei, df_name,sheet_name, rentang, close_ff = True):
     try:
         # cek df dulu
         columns_wajib = ['kec','date','status','utp_selesai']
@@ -128,7 +128,7 @@ def RUN(ssoname, ssopass, pilihan_survei, df_name, rentang, close_ff = True):
             EC.presence_of_element_located((By.XPATH, 'id("Pencacahan_info")')) #finding the element
         )
         time.sleep(6)
-        logger.info("Searching the survey from ("+driver.find_element_by_xpath('id("Pencacahan_info")').text+")")
+        logger.info(f"Searching the survey from ({driver.find_element_by_xpath('id("Pencacahan_info")').text})")
         jmlsurvei = int(driver.find_element_by_xpath('id("Pencacahan_info")').text.split(' ')[3] )
         for i in range(1, jmlsurvei):
             namasurveiweb = driver.find_element_by_xpath(f'id("Pencacahan")/TBODY[1]/TR[{i}]/TD[1]/A[1]').text
@@ -267,7 +267,10 @@ def RUN(ssoname, ssopass, pilihan_survei, df_name, rentang, close_ff = True):
             time.sleep(1)
             driver.find_element_by_css_selector('button.bg-teal-300').click()
             logger.warning("WARN: Attention, open terminal and firefox. Abistu balikin ke SURVEY COLLECTION trus open SURVEI PELAPORAN SEP")
-            pesan = "SUDAH SELEEE" if ikec == looprentang[-1] else "OPEN FIREFOX"
+            pesan = "OPEN FIREFOX"
+            if ikec == looprentang[-1]:
+                pesan = "SUDAH SELEEE"
+                break
             notif.show_toast("Auto fasih PY", pesan, duration = 1)
             confirm = input(f"{datetime.datetime.now()} | PAUSED, ending of '0{ikec}0', Press 'enter' to continue")
             if confirm:

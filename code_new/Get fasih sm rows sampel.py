@@ -41,10 +41,10 @@ def desc():
     return """1) Program untuk mendapatkan data sampel dari row Fasih-sm 
 2) SSO untuk login fasih 
 3) Nama survei isiin survei yang mau diambil datanya, samain dengan nama di Fasih ya 
-4) File dataframe ga digunakan, isi terserah gapapa 
+4) Dataframe gsheet ga digunakan, isi terserah gapapa
 5) Rentang baris isi `0` aja jika get sampel semuanya dari awal (menandakan row keberapa di Fasih) <br> *[Sementara format yang bisa adalah `a` atau `a-c`. Jika masukin format `a,b,c` maka akan error]*"""
 
-def RUN(ssoname, ssopass, pilihan_survei, df_name, rentang, close_ff=True):
+def RUN(ssoname, ssopass, pilihan_survei, df_name,sheet_name, rentang, close_ff=True):
     try:
         # Open mozilla
         logger.info("Opening mozilla ")
@@ -84,7 +84,7 @@ def RUN(ssoname, ssopass, pilihan_survei, df_name, rentang, close_ff=True):
             EC.presence_of_element_located((By.XPATH, 'id("Pencacahan_info")')) #finding the element
         )
         time.sleep(6)
-        logger.info("Searching the survey from ("+driver.find_element_by_xpath('id("Pencacahan_info")').text+")")
+        logger.info(f"Searching the survey from ({driver.find_element_by_xpath('id("Pencacahan_info")').text})")
         jmlsurvei = int(driver.find_element_by_xpath('id("Pencacahan_info")').text.split(' ')[3] )
         for i in range(1, jmlsurvei):
             namasurveiweb = driver.find_element_by_xpath(f'id("Pencacahan")/TBODY[1]/TR[{i}]/TD[1]/A[1]').text

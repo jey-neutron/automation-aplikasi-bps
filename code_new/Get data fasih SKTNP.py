@@ -48,11 +48,11 @@ def desc():
     return """1) Program untuk mendapatkan data dari isian fasih 
 2) SSO untuk login Fasih 
 3) Nama survei isiin `SKTNP 2024` (sesuaiin Fasih) <br> <span class='note'> NOTE!!!!! </span> Lapus kode `10` dan `17` blm pernah ada, jadi mungkin data yang lapusnya itu, data terambilnya beda
-4) File dataframe ga digunakan, isi terserah gapapa
+4) Dataframe gsheet ga digunakan, isi terserah gapapa
 5) Rentang baris isi `1` aja jika get sampel semuanya dari awal (menandakan row keberapa di Fasih) <br> *[Sementara blm berguna sih, baru ditampilin `1-jml row ditampilin` aja]*
 """
 
-def RUN(ssoname, ssopass, pilihan_survei, df_name, rentang, close_ff=True):
+def RUN(ssoname, ssopass, pilihan_survei, df_name,sheet_name, rentang, close_ff=True):
     try:
         # Open mozilla
         logger.info("Opening mozilla ")
@@ -92,7 +92,7 @@ def RUN(ssoname, ssopass, pilihan_survei, df_name, rentang, close_ff=True):
             EC.presence_of_element_located((By.XPATH, 'id("Pencacahan_info")')) #finding the element
         )
         time.sleep(6)
-        logger.info("Searching the survey from ("+driver.find_element_by_xpath('id("Pencacahan_info")').text+")")
+        logger.info(f"Searching the survey from ({driver.find_element_by_xpath('id("Pencacahan_info")').text})")
         jmlsurvei = int(driver.find_element_by_xpath('id("Pencacahan_info")').text.split(' ')[3] )
         for i in range(1, jmlsurvei):
             namasurveiweb = driver.find_element_by_xpath(f'id("Pencacahan")/TBODY[1]/TR[{i}]/TD[1]/A[1]').text
