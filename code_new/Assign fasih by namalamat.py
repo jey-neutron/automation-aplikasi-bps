@@ -48,7 +48,7 @@ def getlistloop(rentang):
 # for main view func
 def desc():
     # desc memuat keterangan program, sso buat apa, nama survei di fasih, dataframe used, rentang baris
-    return """1) Program untuk auto assign by selection di Fasih berdasarkan CSV dataframe
+    return """1) Program untuk auto assign by selection di Fasih berdasarkan CSV dataframe. Nanti klo gada masalah akan lanjut ke sampel selanjutnya, klo ada sesuatu akan ada notenya (sementara kalo sampelnya dah ke-assign akan skip)
 2) SSO untuk login Fasih
 3) Nama survei isiin survei yang mau diassign, samain dengan nama di Fasih ya
 4) Dataframe CSV gunakan `assign_daftar`, tapi harus diedit tiap saat yah sebelum run program <br> Kolom df: `'nm_sampel'`, `'alamat'`, `'email_petugas'`, `'usersso_pengawas'` 
@@ -63,7 +63,6 @@ def RUN(ssoname, ssopass, pilihan_survei, df_name, rentang, close_ff=True):
         logger.info("Checking df")
         df = pd.read_csv(str(this_path)+"/"+df_name)
         columns_df = [x for x in columns_wajib if x in df.columns]
-        logger.info(f"DF= Data head :\n{df.head()}")
         ## cek kolom data csv
         if columns_df != columns_wajib: 
             kataerror = '# Maaf data tidak memenuhi kriteria. \nKolom wajib ada: '+str(columns_wajib)+\
@@ -73,9 +72,11 @@ def RUN(ssoname, ssopass, pilihan_survei, df_name, rentang, close_ff=True):
             notif.show_toast("Assign fasih PY", "ERROR HAPPEN :(", duration = 1)
             raise Exception(kataerror)
             #exit
-        logger.info("Df valid")
         df['result_log'] = np.nan
-        df.loc[df.usersso_pengawas.str.contains('@bps.go.id'), 'usersso_pengawas'] = df.usersso_pengawas.str.strip('@')[0]
+        #df.loc[df.usersso_pengawas.str.contains('@bps.go.id'), 'usersso_pengawas'] = df.usersso_pengawas.str.strip('@')[0]
+        df['usersso_pengawas'] = df['usersso_pengawas'].apply(lambda x: x.split('@')[0] if '@bps.go.id' in x else x)
+        logger.info(f"DF= Data head :\n{df.head()}")
+        logger.info("Df valid")
 
         ## !! Pilih kolom yang diperlukan untuk searching dan matching
         #nama x, alamat y, usersaatini z
@@ -115,13 +116,19 @@ def RUN(ssoname, ssopass, pilihan_survei, df_name, rentang, close_ff=True):
 
         # wait until muncul pilihan survei
         time.sleep(6)
+        ##
+        #confirm = input(f"{datetime.datetime.now()} | PAUSED, Press 'enter' to continue")
+        #if confirm:
+        #    print(f"{datetime.datetime.now()} | Dah kembali ke browser, terminal di minimize aja yah")
+        #print(f"{datetime.datetime.now()} | Dah kembali ke browser, terminal di minimize aja yah")
+        ##
         WebDriverWait(driver,60).until( #using explicit wait for x seconds
             #EC.presence_of_element_located((By.CSS_SELECTOR, "h4.card-title")) #finding the element
             #EC.presence_of_element_located((By.CSS_SELECTOR, "div#Pencacahan_info")) #finding the element
             EC.presence_of_element_located((By.XPATH, 'id("Pencacahan_info")')) #finding the element
         )
         time.sleep(6)
-        logger.info("Searching the survey from ("+driver.find_element_by_xpath('id("Pencacahan_info")').text+")")
+        logger.info(f"Searching the survey from ({driver.find_element_by_xpath('id("Pencacahan_info")').text})")
         jmlsurvei = int(driver.find_element_by_xpath('id("Pencacahan_info")').text.split(' ')[3] )
         for i in range(1, jmlsurvei):
             namasurveiweb = driver.find_element_by_xpath(f'id("Pencacahan")/TBODY[1]/TR[{i}]/TD[1]/A[1]').text
@@ -167,7 +174,7 @@ def RUN(ssoname, ssopass, pilihan_survei, df_name, rentang, close_ff=True):
                 for dfrow in range(start,end): ## loop row df
                     ## Search by namalamat
                     now = datetime.datetime.now()
-                    logger.info(f"{df.index[dfrow]}| {df.nm_sampel[dfrow]}")
+                    logger.info(f"{df.index[dfrow]}| {df.nm_sampel[dfrow]} , {str(df.alamat[dfrow])[:20]}")
                     searchbar = driver.find_element_by_xpath('id("assignmentDatatable_filter")/LABEL[1]/INPUT[1]')
                     searchbar.clear()
                     searchbar.send_keys(df.nm_sampel[dfrow], Keys.RETURN)
@@ -203,13 +210,14 @@ def RUN(ssoname, ssopass, pilihan_survei, df_name, rentang, close_ff=True):
                         #driver.find_element_by_xpath('id("assignmentDatatable")/TBODY[2]/TR['+i+']/TD[5]').text()
 
                         ## cek kesamaan
+                        #logger.info("looprow ke-"+str(i))
                         if (df.nm_sampel[dfrow]+df.alamat[dfrow] == id_web):
                             #print('== ')
                             rowgada = 0 #lanjut karna dah nemu yang sama
                             break #break loop row fasih
                         else:
                             rowgada = 1 #akan next loop
-                            break
+                            continue
                     ## jika gada row yang sama maka CONT next loop,
                     if (rowgada == 1):
                         logger.info(f'{df.index[dfrow]}|↪️ ganemu, mungkin kosong')
@@ -222,7 +230,7 @@ def RUN(ssoname, ssopass, pilihan_survei, df_name, rentang, close_ff=True):
                     tick = 0
                     if (usersaatini !='()'): 
                         ## jika dah ke assign maka CONT
-                        logger.info(f'{df.index[dfrow]}|↪️ skip dah ke assign ke '+usersaatini)
+                        #logger.info(f'{df.index[dfrow]}|↪️ skip dah ke assign ke '+usersaatini)
                         ## write log
                         #with open('log Assign_fasih.csv','a', newline='') as fd:
                         #    writer = csv.writer(fd)
@@ -241,6 +249,7 @@ def RUN(ssoname, ssopass, pilihan_survei, df_name, rentang, close_ff=True):
                     WebDriverWait(driver, 15).until( #using explicit wait for x seconds
                         EC.presence_of_element_located((By.XPATH, "//BODY/NGB-MODAL-WINDOW[1]/DIV[1]/DIV[1]/APP-MODAL-ASSIGN[1]/DIV[2]/DIV[1]/DIV[1]/NGX-SELECT[1]/DIV[1]/DIV[2]/DIV[1]")) #finding the element
                     )
+                    time.sleep(1.2)
                     ## assign pengawas
                     driver.find_elements_by_css_selector('.form-group:nth-child(1) > .col-md-6 .ngx-select__toggle')[0].click()
                     driver.find_elements_by_css_selector('input.ngx-select__search')[0].send_keys(df.usersso_pengawas[dfrow])
@@ -282,7 +291,7 @@ def RUN(ssoname, ssopass, pilihan_survei, df_name, rentang, close_ff=True):
                     if (tick == 1): #then untick
                         driver.find_elements_by_css_selector('.ng-star-inserted:nth-child('+str(i)+') > td > .ng-untouched')[0].click()
                         tick = 0
-                    logger.info(f'{df.index[dfrow]}|↪️ sukses assign ke '+df.email_petugas[dfrow])
+                    #logger.info(f'{df.index[dfrow]}|↪️ sukses assign ke '+df.email_petugas[dfrow])
                     ## write log
                     #with open('log Assign_fasih.csv','a', newline='') as fd:
                     #    writer = csv.writer(fd)
@@ -295,11 +304,11 @@ def RUN(ssoname, ssopass, pilihan_survei, df_name, rentang, close_ff=True):
                             
             ## jika gagal print error
             except Exception as e:
-                logger.info('Error terjadi: '+str(e))
+                logger.info('⚠️Error terjadi: '+str(e))
                 start = dfrow-1
                 if start <0: start = 0
                 gagal += 1
-                logger.info('Gagal:',gagal)
+                logger.info('Gagal: '+str(gagal))
                 ## lemme ngitung diff time each attempt yang gagal. 
                 ## 7annya cuman pengen kalo 5x attempt gagal waktunya cuman < 3s maka BREAK, biar ga lama2 sampe 100 baru break
                 listgagal = []
@@ -311,7 +320,7 @@ def RUN(ssoname, ssopass, pilihan_survei, df_name, rentang, close_ff=True):
                     #difftime = divmod(diff.days * seconds_in_day + diff.seconds, 1)[0]
                     difftime = diff.seconds
 
-                if gagal%2 == 0 :
+                if gagal%3 == 0 :
                     logger.info('Refreshing')
                     driver.refresh()
                     time.sleep(5)
@@ -319,9 +328,12 @@ def RUN(ssoname, ssopass, pilihan_survei, df_name, rentang, close_ff=True):
                     ## !! Komen di bawah ini perlu jika tiap refresh bulan surveinya berbeda. or apalah ketentuannya
                     ########
                     #notif.show_toast("Assign fasih PY", "I Need U to MILIH SURVEY lagi :(", duration = 1)
-                    logger.info("Periode Survei benar?: ", driver.find_element_by_css_selector("select.custom-select").get_attribute("value") )
+                    logger.info("Periode Survei benar?: "+str( Select(driver.find_element_by_css_selector('select.custom-select')).first_selected_option.text ))
+                    # show 100 row
+                    selectshow=Select(driver.find_element_by_xpath('id("assignmentDatatable_length")/LABEL[1]/SELECT[1]'))
+                    selectshow.select_by_index(3)
                     time.sleep(5)
-                    logger.info("Restart lagi at row: ",start)
+                    logger.info("Restart lagi at row: "+str(start))
                     WebDriverWait(driver, 15).until( #using explicit wait for x seconds
                         EC.presence_of_element_located((By.CSS_SELECTOR, 'td.sorting_disabled:nth-child(2)')) )
                     continue
@@ -331,7 +343,7 @@ def RUN(ssoname, ssopass, pilihan_survei, df_name, rentang, close_ff=True):
                     notif.show_toast("Assign fasih PY", "ERROR HAPPEN :(", duration = 1)
                     raise Exception("Gagal "+str(gagal)+"X, ada yang salah inih. Dahla nyerah: "+str(e))
                     
-                logger.info("Restart lagi at row: ",start)
+                logger.info("Restart lagi at row: "+str(start))
                 continue
             
         # end run
