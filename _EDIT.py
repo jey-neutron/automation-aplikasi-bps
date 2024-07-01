@@ -13,6 +13,8 @@ try:
         "username" : "ssouser",
         "password" : "ssopass",
         "survei_fasih": "SURVEI PELAPORAN LAPANGAN SEP 2024",
+        "sheetID":"1O0OUJkeGBJMTVeQ1MRLkYzGWCRqWGHyYBtDv4l-DK9I",
+        "sheetname": 'Sheet1',
         "close_firefox_on_error" : True
     }
     """
