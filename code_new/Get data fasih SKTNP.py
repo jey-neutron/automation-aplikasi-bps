@@ -49,7 +49,7 @@ def desc():
 2) SSO untuk login Fasih 
 3) Nama survei isiin `SKTNP 2024` (sesuaiin Fasih) <br> <span class='note'> NOTE!!!!! </span> Lapus kode `10` dan `17` blm pernah ada, jadi mungkin data yang lapusnya itu, data terambilnya beda
 4) Dataframe gsheet ga digunakan, isi terserah gapapa
-5) Rentang baris isi `1` aja jika get sampel semuanya dari awal (menandakan row keberapa di Fasih) <br> *[Sementara blm berguna sih, baru ditampilin `1-jml row ditampilin (100)` aja, <br>atau bisa pake `1-3` (get row 1-3)]*
+5) Rentang baris isi `1` aja jika get sampel semuanya dari awal (menandakan row keberapa di Fasih) <br> *[Sementara baru ditampilin `1-jml row ditampilin (100)` aja, atau bisa pake `1-3` (get row 1-3)]*
 """
 
 def RUN(ssoname, ssopass, pilihan_survei, df_name,sheet_name, rentang, close_ff=True):
