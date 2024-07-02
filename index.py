@@ -250,9 +250,18 @@ with twocol[1].container():
         placeholder_log = st.container(height=490)
         #st.code(logger.callHandlers())
         try:
-            hasil_run = program_selected.RUN(usernamesso, passwordsso, pilihan_survei, df_name, sheet_name, rentang, close_ff=_EDIT.sso_pegawai['close_firefox_on_error'])
+            hasil_run, df = program_selected.RUN(usernamesso, passwordsso, pilihan_survei, df_name, sheet_name, rentang, close_ff=_EDIT.sso_pegawai['close_firefox_on_error'])
             #with st.container(height=350):        
                 #next(sp) # starts spin
+            try:
+                st.download_button(
+                    label="Download log result as CSV",
+                    data=df.to_csv().encode("utf-8"),
+                    file_name=f"log_result {opt_modul_selected}_{pilihan_survei}.csv",
+                    mime="text/csv",
+                    use_container_width= True
+                )
+            except: pass
             if "Error" in hasil_run:
                 st.error(hasil_run)
             else:
