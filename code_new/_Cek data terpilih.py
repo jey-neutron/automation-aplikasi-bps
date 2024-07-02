@@ -63,7 +63,10 @@ def RUN(ssoname, ssopass, pilihan_survei, df_name,sheet_name, rentang, close_ff=
         #     df = pd.read_excel(str(this_path)+"/"+df_name, sheet_name=df_name.split(".")[0])
         #     onsheet = f" onsheet: {df_name.split(".")[0]} "
         url = f"https://docs.google.com/spreadsheets/d/{df_name}/gviz/tq?tqx=out:csv&sheet={sheet_name}"
-        df = pd.read_csv(url, on_bad_lines='skip')
+        try:
+            df = pd.read_csv(url, on_bad_lines='skip')
+        except:
+            df = ''
         
         logger.info(f'Details of data selected: <br>- GsheetID : {str(df_name)}, onsheet: {sheet_name}<br>- Directory work: {str(this_path)} <br>- Size df : {len(df)} row x {len(df.columns)} columns <br>- Columns : {[i for i in df.columns]} <br>')
         logger.info(f"DF= Data head :\n{df.head()}")
@@ -77,7 +80,7 @@ def RUN(ssoname, ssopass, pilihan_survei, df_name,sheet_name, rentang, close_ff=
         logger.info("Hellow World 2")
         time.sleep(1)
         # end test
-        return("Program selesai di jalankan")
+        return("Program selesai di jalankan. NOTE!!!!! Kalo download result, bakalan langsung ke page home", df)
     
     except Exception as e:
         exc_type, exc_obj, exc_tb = sys.exc_info()
@@ -90,4 +93,4 @@ def RUN(ssoname, ssopass, pilihan_survei, df_name,sheet_name, rentang, close_ff=
         #        driver.close()
         #    except:
         #        pass
-        return (f"Error: {str(e)}, type error: {exc_type}, on file: {fname} on line {exc_tb.tb_lineno}")
+        return (f"Error: {str(e)}, type error: {exc_type}, on file: {fname} on line {exc_tb.tb_lineno}. NOTE!!!!! Bisa download result, tapi bakalan langsung ke page home", df)

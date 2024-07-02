@@ -46,6 +46,7 @@ def desc():
 
 def RUN(ssoname, ssopass, pilihan_survei, df_name,sheet_name, rentang, close_ff=True):
     try:
+        df = ''
         # Open mozilla
         logger.info("Opening mozilla ")
         # add option mozilla
@@ -84,13 +85,13 @@ def RUN(ssoname, ssopass, pilihan_survei, df_name,sheet_name, rentang, close_ff=
             EC.presence_of_element_located((By.XPATH, 'id("Pencacahan_info")')) #finding the element
         )
         time.sleep(6)
-        logger.info(f"Searching the survey from ({driver.find_element_by_xpath('id("Pencacahan_info")').text})")
+        logger.info("Searching the survey from ("+driver.find_element_by_xpath('id("Pencacahan_info")').text+")")
         jmlsurvei = int(driver.find_element_by_xpath('id("Pencacahan_info")').text.split(' ')[3] )
-        for i in range(1, jmlsurvei):
+        for i in range(1, jmlsurvei+1):
             namasurveiweb = driver.find_element_by_xpath(f'id("Pencacahan")/TBODY[1]/TR[{i}]/TD[1]/A[1]').text
             if namasurveiweb == pilihan_survei:
                 break
-            elif i==jmlsurvei: 
+            elif i==jmlsurvei and namasurveiweb!=pilihan_survei: 
                 raise Exception('Survey not found')
         logger.info(f"Found nama survey: {namasurveiweb} == {pilihan_survei}, opening link")
         driver.find_element_by_xpath(f'id("Pencacahan")/TBODY[1]/TR[{i}]/TD[1]/A[1]').click()
@@ -99,7 +100,7 @@ def RUN(ssoname, ssopass, pilihan_survei, df_name,sheet_name, rentang, close_ff=
         # cek if pilih survei sudah oke
         periode_survei = Select(driver.find_element_by_css_selector('select.custom-select')).first_selected_option
         notif.show_toast("Assign fasih PY", "Cek periode survei", duration = 1)
-        logger.info(f"WARN: Cek dulu periode survei = {periode_survei.text} ? Abaikan jika udah dicek") #.getattributevalue
+        logger.info(f"WARN: Cek dulu periode survei = {periode_survei.text} ? 5detik, Abaikan jika udah dicek") #.getattributevalue
         time.sleep(5)
         # show 100 row
         selectshow=Select(driver.find_element_by_xpath('id("assignmentDatatable_length")/LABEL[1]/SELECT[1]'))
@@ -113,9 +114,11 @@ def RUN(ssoname, ssopass, pilihan_survei, df_name,sheet_name, rentang, close_ff=
         isirow = []
         for col in range(1,len(jmlhead)+1):
             isirow.append(driver.find_element_by_xpath(f'id("assignmentDatatable")/THEAD[1]/TR[1]/TD[{str(col)}]').text)
-        with open(f'log {pilihan_survei}_sampel.csv','w',newline='') as fd:
-            writer = csv.writer(fd)
-            writer.writerow([0]+isirow)
+        # with open(f'log {pilihan_survei}_sampel.csv','w',newline='') as fd:
+        #     writer = csv.writer(fd)
+        #     writer.writerow([0]+isirow)
+        columns = isirow
+        df = pd.DataFrame([], columns=columns)
         #row_max = int(driver.find_element_by_css_selector('div#assignmentDatatable_info').text.split()[5]) # get num of all rows
         #numrow = 0 # initiate from row start (default value = 0)
         numpage = 1 # page number
@@ -142,9 +145,10 @@ def RUN(ssoname, ssopass, pilihan_survei, df_name,sheet_name, rentang, close_ff=
                     isirow.append(driver.find_element_by_xpath(f'id("assignmentDatatable")/TBODY[2]/TR[{str(row)}]/TD[{str(col)}]').text)
                 # write 1 row to csv
                 #logger.info(isirow)
-                with open(f'log {pilihan_survei}_sampel.csv','a',newline='') as fd:
-                    writer = csv.writer(fd)
-                    writer.writerow([numrow]+isirow)
+                # with open(f'log {pilihan_survei}_sampel.csv','a',newline='') as fd:
+                #     writer = csv.writer(fd)
+                #     writer.writerow([numrow]+isirow)
+                df = df._append(pd.DataFrame([isirow], columns=columns), ignore_index=True)
                 #print(row, col, isirow)
                 #print(numrow, end=" ")
                 logger.info(f"Getting data onrow= {numrow}, onpage= {numpage}")
@@ -157,7 +161,7 @@ def RUN(ssoname, ssopass, pilihan_survei, df_name,sheet_name, rentang, close_ff=
         time.sleep(2)
         logger.info('SELESEEEEE')
         driver.close()
-        return("Program selesai di jalankan, hasil file ada di ➡️ "+f'log {pilihan_survei}_sampel.csv')
+        return("Program selesai di jalankan, hasil file bisa didownload. NOTE!!!!! Kalo download result, bakalan langsung ke page home", df)
     
     except Exception as e:
         exc_type, exc_obj, exc_tb = sys.exc_info()
@@ -170,4 +174,4 @@ def RUN(ssoname, ssopass, pilihan_survei, df_name,sheet_name, rentang, close_ff=
                 driver.close()
             except:
                 pass
-        return (f"Error: {str(e)}, type error: {exc_type}, on file: {fname} on line {exc_tb.tb_lineno}")
+        return (f"Error: {str(e)}, type error: {exc_type}, on file: {fname} on line {exc_tb.tb_lineno}. NOTE!!!!! Bisa download result, tapi bakalan langsung ke page home", df)

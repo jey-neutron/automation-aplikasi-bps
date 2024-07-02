@@ -70,11 +70,17 @@ def desc():
 def RUN(ssoname, ssopass, pilihan_survei, df_name,sheet_name, rentang, close_ff = True):
     try:
         # cek df dulu
+        df = ''
         columns_wajib = ['kec','date','status','utp_selesai']
         logger.info(f'Data yang mau dipake adalah {df_name}. Kolom wajib ada: {columns_wajib} ')
         # read df yang terpilih
         logger.info("Checking df")
-        df = pd.read_excel(str(this_path)+"/"+df_name, sheet_name=df_name.split(".")[0])
+        #df = pd.read_excel(str(this_path)+"/"+df_name, sheet_name=df_name.split(".")[0])
+        url = f"https://docs.google.com/spreadsheets/d/{df_name}/gviz/tq?tqx=out:csv&sheet={sheet_name}"
+        try:
+            df = pd.read_csv(url, on_bad_lines='skip')
+        except:
+            df = ''
         columns_df = [x for x in columns_wajib if x in df.columns]
         logger.info(f"DF= Data head :\n{df.head()}")
         ## cek kolom data csv
@@ -128,7 +134,7 @@ def RUN(ssoname, ssopass, pilihan_survei, df_name,sheet_name, rentang, close_ff 
             EC.presence_of_element_located((By.XPATH, 'id("Pencacahan_info")')) #finding the element
         )
         time.sleep(6)
-        logger.info(f"Searching the survey from ({driver.find_element_by_xpath('id("Pencacahan_info")').text})")
+        logger.info("Searching the survey from ("+driver.find_element_by_xpath('id("Pencacahan_info")').text+")")
         jmlsurvei = int(driver.find_element_by_xpath('id("Pencacahan_info")').text.split(' ')[3] )
         for i in range(1, jmlsurvei):
             namasurveiweb = driver.find_element_by_xpath(f'id("Pencacahan")/TBODY[1]/TR[{i}]/TD[1]/A[1]').text
@@ -143,7 +149,7 @@ def RUN(ssoname, ssopass, pilihan_survei, df_name,sheet_name, rentang, close_ff 
         # cek if pilih survei sudah oke
         periode_survei = Select(driver.find_element_by_css_selector('select.custom-select')).first_selected_option
         notif.show_toast("Assign fasih PY", "Cek periode survei", duration = 1)
-        logger.info(f"WARN: Cek dulu periode survei = {periode_survei.text} ? Abaikan jika udah dicek") #.getattributevalue
+        logger.info(f"WARN: Cek dulu periode survei = {periode_survei.text} ? 5detik, Abaikan jika udah dicek") #.getattributevalue
         time.sleep(5)
         # show 100 row
         selectshow=Select(driver.find_element_by_xpath('id("assignmentDatatable_length")/LABEL[1]/SELECT[1]'))
@@ -288,7 +294,7 @@ def RUN(ssoname, ssopass, pilihan_survei, df_name,sheet_name, rentang, close_ff 
         #while cek_input():
         #    time.sleep(1)
         time.sleep(2)
-        return("Program selesai di jalankan")
+        return("Program selesai di jalankan. NOTE!!!!! Kalo download result, bakalan langsung ke page home", df)
     
     except Exception as e:
         exc_type, exc_obj, exc_tb = sys.exc_info()
@@ -301,4 +307,4 @@ def RUN(ssoname, ssopass, pilihan_survei, df_name,sheet_name, rentang, close_ff 
                 driver.close()
             except:
                 pass
-        return (f"Error: {str(e)}, type error: {exc_type}, on file: {fname} on line {exc_tb.tb_lineno}")
+        return (f"Error: {str(e)}, type error: {exc_type}, on file: {fname} on line {exc_tb.tb_lineno}. NOTE!!!!! Bisa download result, tapi bakalan langsung ke page home", df)
