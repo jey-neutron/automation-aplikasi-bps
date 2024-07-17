@@ -212,8 +212,8 @@ def RUN(ssoname, ssopass, pilihan_survei, df_name,sheet_name, rentang, close_ff=
                         headusersaatini = driver.find_elements_by_css_selector(f'.thead-bps td:nth-child({str(kolomuser)})')[0].text
                         #if headusersaatini!="User Saat ini": raise Exception("Kolom sudah berubah, hubungi admin suruh sesuaikan lagiii")
                         
-                        id_web = driver.find_elements_by_css_selector(f'.ng-star-inserted:nth-child({str(i)}) > .ng-star-inserted:nth-child({str(kolomnama)})')[0].text + \
-                            driver.find_elements_by_css_selector(f'.ng-star-inserted:nth-child({str(i)}) > .ng-star-inserted:nth-child({str(kolomalamat)})')[0].text
+                        id_web = driver.find_elements_by_css_selector(f'.ng-star-inserted:nth-child({str(i)}) > td:nth-child({str(kolomnama)})')[0].text + \
+                            driver.find_elements_by_css_selector(f'.ng-star-inserted:nth-child({str(i)}) > td:nth-child({str(kolomalamat)})')[0].text
                         usersaatini = driver.find_elements_by_css_selector(f'.ng-star-inserted:nth-child({str(i)}) > td:nth-child({str(kolomuser)})')[0].text
                         #driver.find_element_by_xpath('id("assignmentDatatable")/TBODY[2]/TR['+i+']/TD[5]').text()
 
@@ -297,7 +297,10 @@ def RUN(ssoname, ssopass, pilihan_survei, df_name,sheet_name, rentang, close_ff=
                     except: pass
                     
                     if (tick == 1): #then untick
-                        driver.find_elements_by_css_selector('.ng-star-inserted:nth-child('+str(i)+') > td > .ng-untouched')[0].click()
+                        #driver.find_elements_by_css_selector('.ng-star-inserted:nth-child('+str(i)+') > td > .ng-untouched')[0].click()
+                        # replace demgam metode tick all then untick all
+                        driver.find_element_by_name('selectAllId').click(); time.sleep(0.2) #tick all
+                        driver.find_element_by_name('selectAllId').click(); time.sleep(0.2) #untick all
                         tick = 0
                     #logger.info(f'{df.index[dfrow]}|↪️ sukses assign ke '+df.email_petugas[dfrow])
                     ## write log
