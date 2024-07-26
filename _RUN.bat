@@ -10,5 +10,7 @@ python -m pip install -r reqlibrary.txt
 :: clear screen
 cls
 :: run web
-python -m streamlit run index.py
+::python -m streamlit run index.py
+python -m streamlit run Home.py
+
 pause

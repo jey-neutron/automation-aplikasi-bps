@@ -40,7 +40,23 @@ try:
         Get_fasih_sm_IDENTPODES.RUN()
     input()
     """
-    
+    # Func to Open mozilla
+    def open_ff(headless = True):
+        from selenium import webdriver
+        from pathlib import Path
+        # add option mozilla
+        opts = webdriver.FirefoxOptions()
+        opts.add_argument("--width=1000")
+        opts.add_argument("--height=800")
+        opts.headless = headless
+        # add profile extension automa
+        profile = webdriver.FirefoxProfile() 
+        if Path("../automa-1.28.27.xpi").is_file():
+            profile.add_extension(extension='../automa-1.28.27.xpi')
+        driver = webdriver.Firefox(executable_path = str(Path().resolve())+"/"+"geckodriver.exe", firefox_profile=profile, options=opts)
+
+        return driver
+
 except Exception as e:
     print('ERRR: ',str(e))
     input()
