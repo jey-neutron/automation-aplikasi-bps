@@ -76,8 +76,8 @@ with twocol[0].container():
     with st.container().form(key="form_sso"):
         st.subheader("Isi form ini dulu")
         st.write("Baca deskripsi di samping yah untuk milih mana aja")
-        usernamesso = st.text_input("Username SSO", _EDIT.sso_pegawai['username'])
-        passwordsso = st.text_input("Password SSO", _EDIT.sso_pegawai['password'], type="password")
+        usernamesso = st.text_input("Username SSO", _EDIT.variabel['username'])
+        passwordsso = st.text_input("Password SSO", _EDIT.variabel['password'], type="password")
         st.markdown(
             f'<p class="small-font">Untuk mengubah "default value" dapat mengedit file <a>_EDIT.py</a> di folder ini: <a href="{str(this_path)}">{str(this_path)}</a></p>',
             unsafe_allow_html=True,
@@ -98,7 +98,7 @@ with twocol[0].container():
         #     f'<p class="small-font">Liat deskripsi & edit dulu filenya di folder ini: <a href="{str(this_path)}">{str(this_path)}</a></p>',
         #     unsafe_allow_html=True,
         # )
-        df_name = st.text_input("Ketik spreadsheetID yang digunakan", _EDIT.sso_pegawai['sheetID'])
+        df_name = st.text_input("Ketik spreadsheetID yang digunakan", _EDIT.variabel['sheetID'])
         linkgsheet = f"https://docs.google.com/spreadsheets/d/{df_name}"
         st.markdown(
             f'<p class="small-font">Liat deskripsi & edit dulu filenya di link ini: <a href="{linkgsheet}">{linkgsheet}</a></p>',
@@ -106,7 +106,7 @@ with twocol[0].container():
         )
 
         # sheet name 
-        sheet_name = st.text_input("Ketik nama sheet yang digunakan",  _EDIT.sso_pegawai['sheetname'])
+        sheet_name = st.text_input("Ketik nama sheet yang digunakan",  _EDIT.variabel['sheetname'])
 
         # file program yang tersedia di folder directory
         opt_modul = []
@@ -132,7 +132,7 @@ with twocol[0].container():
         modul_dict = dict(zip(opt_modul,modul_desc))  
 
         # argumen modul
-        pilihan_survei = st.text_input('Ketik nama survei di Fasih', _EDIT.sso_pegawai['survei_fasih'])
+        pilihan_survei = st.text_input('Ketik nama survei di Fasih', _EDIT.variabel['survei_fasih'])
         st.markdown(
             f'<p class="small-font">Sementara input manual dulu :" <br> DAN HARUS SAMA DI FASIH</p>',
             unsafe_allow_html=True,
@@ -250,7 +250,7 @@ with twocol[1].container():
         placeholder_log = st.container(height=490)
         #st.code(logger.callHandlers())
         try:
-            hasil_run, df = program_selected.RUN(usernamesso, passwordsso, pilihan_survei, df_name, sheet_name, rentang, close_ff=_EDIT.sso_pegawai['close_firefox_on_error'])
+            hasil_run, df = program_selected.RUN(usernamesso, passwordsso, pilihan_survei, df_name, sheet_name, rentang, close_ff=_EDIT.variabel['close_firefox_on_error'])
             #with st.container(height=350):        
                 #next(sp) # starts spin
             try:

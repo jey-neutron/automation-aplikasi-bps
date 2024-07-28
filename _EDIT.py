@@ -9,13 +9,15 @@ sys.path.append(dir_path+'/code')
     
 try:
     ## UBAH SSO PEGAWAI ##
-    sso_pegawai = {
+    variabel = {
         "username" : "ssouser",
         "password" : "ssopass",
-        "survei_fasih": "SURVEI PELAPORAN LAPANGAN SEP 2024",
+        "survei_fasih": "SAKERNAS 2024 AGS - PEMUTAKHIRAN",
         "sheetID":"1O0OUJkeGBJMTVeQ1MRLkYzGWCRqWGHyYBtDv4l-DK9I",
         "sheetname": 'Sheet1',
-        "close_firefox_on_error" : True
+        "rentang":'1',
+        "close_firefox_on_error" : True,
+        "hide_firefox": False
     }
     """
     ## UBAH YANG MANA PY YANG MAU DI RUN ##
@@ -41,7 +43,7 @@ try:
     input()
     """
     # Func to Open mozilla
-    def open_ff(headless = True):
+    def open_ff(headless = variabel["hide_firefox"]):
         from selenium import webdriver
         from pathlib import Path
         # add option mozilla
