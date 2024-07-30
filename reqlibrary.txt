@@ -10,5 +10,5 @@ six==1.16.0
 tzdata==2024.1
 urllib3==1.26.16
 win10toast==0.9
-streamlit==1.35.0
+streamlit==1.37.0
 openpyxl==3.1.3
