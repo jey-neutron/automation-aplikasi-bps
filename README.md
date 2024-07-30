@@ -26,7 +26,6 @@ Tinggal edit beberapa di file [`_EDIT.py`](/_EDIT.py) lalu jalankan [`_RUN.bat`]
 ### - req file (MUST NEED)
 - [python](https://www.python.org/ftp/python/3.11.0/python-3.11.0-amd64.exe)
 - [mozilla](https://www.mozilla.org/firefox/download/thanks/) & [geckodriver](/geckodriver.exe)
-- [assign_daftar.csv](/assign_daftar.csv) (untuk auto-assignment fasih)
 
 ### - req library python 
 <sup>(abaikan, nanti auto keinstall ketika nge-run/open .py. Tapi kalo stuck install loop, re-run aja :")</sup>
@@ -35,9 +34,3 @@ Tinggal edit beberapa di file [`_EDIT.py`](/_EDIT.py) lalu jalankan [`_RUN.bat`]
 - urllib3==1.26.16
 - win10toast
 
-### - assign_daftar.csv column:
-- ID_Wilkerstat
-- nm_sampel
-- alamat
-- email_petugas
-- usersso_pengawas
