@@ -50,7 +50,7 @@ def desc():
     # desc memuat keterangan program, sso buat apa, nama survei di fasih, dataframe used, rentang baris
     return "1) Program pendek untuk mengecek data csv terpilih \n 2) Juga terdapat template modul bagi developer (copy me) \n 3) Isi form sesuai data yang ingin dicek, field Rentang ga ngaruh"
 
-def RUN(ssoname, ssopass, pilihan_survei, df_name,sheet_name, rentang, close_ff=True):
+def RUN(ssoname, ssopass, tabsurvei, pilihan_survei, df_name,sheet_name, rentang, hide_firefox, close_ff=True):
     try:
         # show warning in log
         logger.info("WARN: (Tes warning) Cek dulu df nya")
