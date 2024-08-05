@@ -81,25 +81,27 @@ def RUN(ssoname, ssopass, tab_survei, pilihan_survei, df_name,sheet_name, rentan
                 return False
 
         # click pelatihan
-        if tab_survei == 1:
+        if tab_survei == "Pencacahan":
             idtableinfo = "Pencacahan_info"
             idtable = "Pencacahan"
-        if tab_survei == 2:
+        if tab_survei == "Pelatihan":
             WebDriverWait(driver, 30).until(
                 EC.presence_of_element_located((By.CSS_SELECTOR, '.ng-star-inserted:nth-child(2) > .nav-link'))
             ).click()
             idtableinfo = "DataTables_Table_2_info" if xpath_exist(f'id("DataTables_Table_2_info")') else "DataTables_Table_0_info"
             idtable = "DataTables_Table_2" if xpath_exist(f'id("DataTables_Table_2_info")') else "DataTables_Table_0"
-        if tab_survei == 3:
+        if tab_survei == "Uji Coba":
             WebDriverWait(driver, 30).until(
                 EC.presence_of_element_located((By.CSS_SELECTOR, '.ng-star-inserted:nth-child(3) > .nav-link'))
             ).click()
             idtableinfo = "DataTables_Table_5_info" if xpath_exist(f'id("DataTables_Table_5_info")') else "DataTables_Table_1_info"
             idtable = "DataTables_Table_5" if xpath_exist(f'id("DataTables_Table_5_info")') else "DataTables_Table_1"
         # 
-        time.sleep(6)
+        time.sleep(3)
         pilihan_survei = pilihan_survei.strip()
         print("Searching the survey from ("+driver.find_element_by_xpath(f'id("{idtableinfo}")').text+")")
+        driver.find_element_by_xpath("(//input[@type='search'])[1]").send_keys(pilihan_survei)
+        time.sleep(3)
         jmlsurvei = int(driver.find_element_by_xpath(f'id("{idtableinfo}")').text.split(' ')[3] )
         for i in range(1, jmlsurvei+1):
             namasurveiweb = driver.find_element_by_xpath(f'id("{idtable}")/TBODY[1]/TR[{i}]/TD[1]/A[1]').text
@@ -143,7 +145,7 @@ def RUN(ssoname, ssopass, tab_survei, pilihan_survei, df_name,sheet_name, rentan
             row_max = int ( str(rentang).split[1] )+1
         else :
             numrow = int(rentang)
-            row_max = int(driver.find_element_by_css_selector('div#assignmentDatatable_info').text.split()[5]) # get num of all rows
+            row_max = int(driver.find_element_by_css_selector('div#assignmentDatatable_info').text.split()[5].replace(",","")) # get num of all rows
 
         # get isi
         logger.info(f"Getting from rows {numrow} until {row_max}")
@@ -156,6 +158,7 @@ def RUN(ssoname, ssopass, tab_survei, pilihan_survei, df_name,sheet_name, rentan
             for row in range(1,jml_row+1):
                 numrow += 1 # get this row
                 isirow = []
+                time.sleep(0.2)
                 for col in range(1,len(jmlhead)+1):
                     isirow.append(driver.find_element_by_xpath(f'id("assignmentDatatable")/TBODY[2]/TR[{str(row)}]/TD[{str(col)}]').text)
                 # write 1 row to csv
@@ -170,8 +173,8 @@ def RUN(ssoname, ssopass, tab_survei, pilihan_survei, df_name,sheet_name, rentan
             
             #next page
             numpage+=1
-            time.sleep(0.5)
             WebDriverWait(driver, 30).until(EC.presence_of_element_located((By.XPATH, 'id("assignmentDatatable_next")')) ).click()
+            time.sleep(2)
             
         time.sleep(2)
         logger.info('SELESEEEEE')
