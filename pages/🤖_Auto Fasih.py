@@ -317,7 +317,7 @@ elif st.session_state.var_submit == 1:
     placeholder_log = st.container(height=500)
     #st.code(logger.callHandlers())
     try:
-        hasil_run, df = program_selected.RUN(usernamesso, passwordsso, tabsurvei, pilihan_survei, df_name, sheet_name, rentang, hide_firefox = _EDIT.variabel['hide_firefox'], close_ff=_EDIT.variabel['close_firefox_on_error'])
+        hasil_run, df = program_selected.RUN(usernamesso, passwordsso, tabsurvei, pilihan_survei, df_name, sheet_name, rentang, hide_ff = _EDIT.variabel['hide_firefox'], close_ff=_EDIT.variabel['close_firefox_on_error'])
         #with st.container(height=350):        
             #next(sp) # starts spin
         try:
